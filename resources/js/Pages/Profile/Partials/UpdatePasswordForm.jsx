@@ -1,10 +1,10 @@
 import { useRef } from 'react';
 import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
 import { useForm } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
+import { Label } from "@/Components/ui/label.jsx";
+import { Input } from "@/Components/ui/input";
+import { Button } from "@/Components/ui/button";
 
 export default function UpdatePasswordForm({ className = '' }) {
     const passwordInput = useRef();
@@ -24,14 +24,14 @@ export default function UpdatePasswordForm({ className = '' }) {
             onSuccess: () => reset(),
             onError: (errors) => {
                 if (errors.password) {
-                    reset('password', 'password_confirmation');
+                    //reset('password', 'password_confirmation');
                     passwordInput.current.focus();
                 }
 
-                if (errors.current_password) {
-                    reset('current_password');
-                    currentPasswordInput.current.focus();
-                }
+                // if (errors.current_password) {
+                //     reset('current_password');
+                //     currentPasswordInput.current.focus();
+                // }
             },
         });
     };
@@ -47,55 +47,74 @@ export default function UpdatePasswordForm({ className = '' }) {
             </header>
 
             <form onSubmit={updatePassword} className="mt-6 space-y-6">
-                <div>
-                    <InputLabel htmlFor="current_password" value="Current Password" />
+            <div className="space-y-2">
+                            <div className="flex items-center">
+                                <Label htmlFor="current_password">Current Password</Label>
+                            </div>
+                            <Input
+                                id="current_password"
+                                type="password"
+                                name="current_password"
+                                value={data.current_password}
+                                className="mt-1 block w-full"
+                                autoComplete="current-password"
+                                onChange={(e) =>
+                                    setData("current_password", e.target.value)
+                                }
+                            />
 
-                    <TextInput
-                        id="current_password"
-                        ref={currentPasswordInput}
-                        value={data.current_password}
-                        onChange={(e) => setData('current_password', e.target.value)}
-                        type="password"
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                    />
+                            <InputError
+                                message={errors.current_password}
+                                className="mt-2"
+                            />
+                        </div>
 
-                    <InputError message={errors.current_password} className="mt-2" />
-                </div>
+                <div className="space-y-2">
+                            <div className="flex items-center">
+                                <Label htmlFor="password">Password</Label>
+                            </div>
+                            <Input
+                                id="password"
+                                type="password"
+                                name="password"
+                                value={data.password}
+                                className="mt-1 block w-full"
+                                autoComplete="current-password"
+                                onChange={(e) =>
+                                    setData("password", e.target.value)
+                                }
+                            />
 
-                <div>
-                    <InputLabel htmlFor="password" value="New Password" />
+                            <InputError
+                                message={errors.password}
+                                className="mt-2"
+                            />
+                        </div>
 
-                    <TextInput
-                        id="password"
-                        ref={passwordInput}
-                        value={data.password}
-                        onChange={(e) => setData('password', e.target.value)}
-                        type="password"
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                    />
+                        <div className="space-y-2">
+                            <div className="flex items-center">
+                                <Label htmlFor="password_confirmation">Password Confirmation</Label>
+                            </div>
+                            <Input
+                                id="password_confirmation"
+                                type="password"
+                                name="password_confirmation"
+                                value={data.password_confirmation}
+                                className="mt-1 block w-full"
+                                autoComplete="current-password"
+                                onChange={(e) =>
+                                    setData("password_confirmation", e.target.value)
+                                }
+                            />
 
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div>
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
-
-                    <TextInput
-                        id="password_confirmation"
-                        value={data.password_confirmation}
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                        type="password"
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                    />
-
-                    <InputError message={errors.password_confirmation} className="mt-2" />
-                </div>
+                            <InputError
+                                message={errors.password_confirmation}
+                                className="mt-2"
+                            />
+                        </div>
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <Button disabled={processing}>Save</Button>
 
                     <Transition
                         show={recentlySuccessful}

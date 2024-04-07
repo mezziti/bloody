@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
+use Exception;
 use App\Models\User;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\http\Traits\IfFieldExistsTrait;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Auth\Events\Registered;
+use App\Providers\RouteServiceProvider;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
+    use IfFieldExistsTrait;
+    
     public function create(): Response
     {
         return Inertia::render('Auth/Register');
@@ -31,17 +33,39 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $validatedData=$request->validate([
             'name' => 'required|string|max:255',
+            'age' => 'required|integer',
+            'type' => Rule::in(['Donor', 'Recipient']),
+            'gender' => Rule::in(['male', 'female']),
+            'blood_type' => Rule::in(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
+            'phone1' => 'required|string|max:10',
+            'city_id' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        if ($request->phone2) {
+            $validatedData['phone2']=$request->validate([
+                'phone2' => 'string|max:10'
+            ])['phone2'];
+        }
+
+        if ($request->address) {
+            $validatedData['address']=$request->validate([
+            'address' => 'string|max:255',
+            ])['address'];
+        }
+
+        if ($request->last_donation_date) {
+            $validatedData['last_donation_date']=$request->validate([
+                'last_donation_date' => 'date'
+            ])['last_donation_date'];
+        }
+
+        $validatedData['password'] = Hash::make($request->password);
+
+        $user = User::create($validatedData);
 
         event(new Registered($user));
 

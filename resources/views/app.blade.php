@@ -3,6 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        {{-- <meta favicon="{{ asset('img/favico.svg') }}"> --}}
+        <link rel="icon" href="{{ asset('img/favicon.svg') }}" type="image/svg+xml">
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 

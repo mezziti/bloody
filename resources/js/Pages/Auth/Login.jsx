@@ -54,7 +54,7 @@ export default function Login() {
                                 <Label htmlFor="password">Password</Label>
                                 <Link
                                     className="ml-auto inline-block text-sm underline"
-                                    href="#"
+                                    href={route('password.request')}
                                 >
                                     Forgot your password?
                                 </Link>
@@ -80,8 +80,8 @@ export default function Login() {
                     </div>
                     <div className="mt-4 text-center text-sm">
                         Don't have an account?
-                        <Link className="underline" href="#">
-                            Sign up
+                        <Link className="underline" href={route('register')}>
+                            Register
                         </Link>
                     </div>
                 </div>

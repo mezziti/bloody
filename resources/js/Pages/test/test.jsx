@@ -1,11 +1,11 @@
 import { Head } from "@inertiajs/react";
-import { SideBar } from "@/Layouts/SideBar";
+import { SideBar } from "@/Layouts/SideBar.jsx";
 
-export default function Test() {
+export default function Test({ auth }) {
     return (
         <>
             <Head title="Dashboard" />
-            <SideBar pageName={"test"}>
+            <SideBar user1={auth.user} pageName={"test"}>
                 <div className="py-12">
                     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                         <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
