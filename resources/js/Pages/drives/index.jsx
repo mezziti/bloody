@@ -23,6 +23,7 @@ import { ScrollArea } from "@/Components/ui/scroll-area";
 
 const Home = ({ auth, drives, cities }) => {
   const now = new Date();
+  drives = drives.filter((drive) => new Date(drive.end_date) > now);
   const user = auth.user;
   // const cities = [
   //   {
@@ -198,7 +199,7 @@ const Home = ({ auth, drives, cities }) => {
                     Find a blood drive near you
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex sm:absolute sm:end-10 sm:mt-10 gap-2">
                   <Select
                     value={city}
                     onValueChange={(value) => setCity(value)}
@@ -208,10 +209,12 @@ const Home = ({ auth, drives, cities }) => {
                       <SelectValue placeholder="Select City" />
                     </SelectTrigger>
                     <SelectContent className="z-20 sm:z-20">
-                      <ScrollArea className="h-40 z-10">
+                      <ScrollArea className="max-h-40 z-10">
                         <SelectGroup>
                           {cities.map((city) => (
-                            <SelectItem value={city.id}>{city.name}</SelectItem>
+                            <SelectItem key={city.id} value={city.id}>
+                              {city.name}
+                            </SelectItem>
                           ))}
                         </SelectGroup>
                       </ScrollArea>
@@ -230,16 +233,26 @@ const Home = ({ auth, drives, cities }) => {
                       <div className="w-full">
                         {new Date(drive.begin_date) > now ? (
                           <Badge
-                            className={"absolute end-5 mt-1 bg-orange-500"}
+                            className={
+                              "absolute end-5 mt-1 bg-orange-500 hover:bg-orange-500"
+                            }
                           >
                             Upcoming
                           </Badge>
                         ) : new Date(drive.end_date) < now ? (
-                          <Badge className={"absolute end-5 mt-1 bg-red-500"}>
+                          <Badge
+                            className={
+                              "absolute end-5 mt-1 bg-red-500 hover:bg-red-500"
+                            }
+                          >
                             Ended
                           </Badge>
                         ) : (
-                          <Badge className={"absolute end-5 mt-1 bg-green-500"}>
+                          <Badge
+                            className={
+                              "absolute end-5 mt-1 bg-green-500 hover:bg-green-500"
+                            }
+                          >
                             Active
                           </Badge>
                         )}
@@ -279,37 +292,41 @@ const Home = ({ auth, drives, cities }) => {
                             </div>
                           </Link>
                           <div className="items-center sm:pt-6 ">
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button className="m-5">Participate</Button>
-                              </DialogTrigger>
-                              <DialogContent className="sm:max-w-[425px]">
-                                {user ? (
-                                  <div className="font-medium mx-auto py-4">
-                                    Are you sur you want to participate?
-                                  </div>
-                                ) : (
-                                  <div className="font-medium mx-auto py-4">
-                                    You must login to participate
-                                  </div>
-                                )}
-                                <DialogFooter className="mx-auto">
+                            {new Date(drive.end_date) > now ? (
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button className="m-5">Participate</Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[425px]">
                                   {user ? (
-                                    <Link href="/">
-                                      <Badge className={"rounded-sm text-lg"}>
-                                        Participate
-                                      </Badge>
-                                    </Link>
+                                    <div className="font-medium mx-auto py-4">
+                                      Are you sur you want to participate?
+                                    </div>
                                   ) : (
-                                    <Link href="/login">
-                                      <Badge className={"rounded-sm text-lg"}>
-                                        Login
-                                      </Badge>
-                                    </Link>
+                                    <div className="font-medium mx-auto py-4">
+                                      You must login to participate
+                                    </div>
                                   )}
-                                </DialogFooter>
-                              </DialogContent>
-                            </Dialog>
+                                  <DialogFooter className="mx-auto">
+                                    {user ? (
+                                      <Link href="/">
+                                        <Badge className={"rounded-sm text-lg"}>
+                                          Participate
+                                        </Badge>
+                                      </Link>
+                                    ) : (
+                                      <Link href="/login">
+                                        <Badge className={"rounded-sm text-lg"}>
+                                          Login
+                                        </Badge>
+                                      </Link>
+                                    )}
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                            ) : (
+                              ""
+                            )}
                           </div>
                         </div>
                       </div>

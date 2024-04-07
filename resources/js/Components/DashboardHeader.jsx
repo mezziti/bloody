@@ -57,8 +57,8 @@ const DashboardHeader = ({ user }) => {
                 </form> */}
                 <HeaderLink
                     className="font-medium"
-                    href={route("drives")}
-                    active={route().current("drives")}
+                    href={route("drives.index")}
+                    active={route().current("drives.index")}
                 >
                     Drives
                 </HeaderLink>

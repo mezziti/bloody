@@ -10,7 +10,7 @@ import { Home } from "lucide-react";
 const MainHeader = ({ user }) => {
     return (
         <header className="flex items-center h-16 px-4 border-b lg:h-20 md:px-6">
-            <Link className="mr-6" href="#">
+            <Link className="mr-6" href="/home">
                 <ApplicationLogo />
                 <span className="sr-only">Bloody</span>
             </Link>

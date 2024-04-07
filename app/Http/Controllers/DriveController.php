@@ -15,7 +15,7 @@ class DriveController extends Controller
   public function index()
   {
     return Inertia::render('drives/index', [
-      'drives' => Drive::with('city')->with('bloodBank')->orderBy('begin_date', 'asc')->get()->map(function ($drive) {
+      'drives' => Drive::with('city')->with('bloodBank')->orderBy('begin_date', 'desc')->get()->map(function ($drive) {
         return [
           'id' => $drive->id,
           'name' => $drive->name,

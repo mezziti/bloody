@@ -1,4 +1,4 @@
-import { Link } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import MainHeader from "@/Components/MainHeader";
 import Guest from "@/Layouts/GuestLayout";
 import {
@@ -12,6 +12,7 @@ import {
 const Home = ({ auth }) => {
     return (
         <Guest user={auth.user}>
+          <Head title="Home"/>
             {/* <section className="w-full md:pt-24 lg:pt-32">
                 <div className="container px-4 space-y-10 xl:space-y-16">
                     <div className="grid md:grid-cols-2 md:gap-10 lg:gap-16">
@@ -233,7 +234,7 @@ const Home = ({ auth }) => {
             <section className="bg-white dark:bg-gray-900">
                 <div className="pt-8 px-4 mx-auto max-w-screen-xl text-center lg:pt-8 lg:px-12">
                     <Link
-                        href="#"
+                        href="/drives"
                         className="inline-flex justify-between items-center py-1 px-1 pr-4 mb-7 text-sm text-gray-700 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
                         role="alert"
                     >
