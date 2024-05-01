@@ -15,7 +15,7 @@ import {
   SelectGroup,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/Components/ui/select";
 import { useState } from "react";
 import { ScrollArea } from "@/Components/ui/scroll-area";
@@ -27,10 +27,9 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger
+  SheetTrigger,
 } from "@/Components/ui/sheet";
-const Index = ({ auth, donors, cities }) => {
-
+const Index = ({ auth, posts, cities }) => {
   const bloodTypes = [
     {
       name: "A+",
@@ -59,15 +58,22 @@ const Index = ({ auth, donors, cities }) => {
   ];
 
   const user = auth.user;
+  posts = posts.filter((post) => post.status != "inactive");
 
   const [city, setCity] = useState("");
+  const [urgency, setUrgency] = useState("");
   const [blood_type, setBloodType] = useState("");
 
-  donors = city ? donors.filter((donor) => donor.city.id === city) : donors;
-  donors = blood_type ? donors.filter((donor) => donor.blood_type === blood_type) : donors;
+  posts = city ? posts.filter((post) => post.city.id === city) : posts;
+  posts = blood_type
+    ? posts.filter((post) => post.blood_type === blood_type)
+    : posts;
+  posts = urgency
+    ? posts.filter((post) => post.urgency_level === urgency)
+    : posts;
   return (
     <Guest user={user}>
-      <Head title="All donors" />
+      <Head title="All posts" />
       <section className="pl-4 md:pl-6">
         <div className="flex flex-col md:flex-row gap-4 xl:gap-8 max-w-7xl mx-auto items-start">
           <div className="w-full md:w-[300px] order-last md:order-first">
@@ -84,13 +90,13 @@ const Index = ({ auth, donors, cities }) => {
                         <Select
                           value={city}
                           onValueChange={(value) => setCity(value)}
-                          className="ml-auto z-20 sm:z-20"
+                          className="ml-auto "
                         >
                           <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Select City" />
                           </SelectTrigger>
-                          <SelectContent className="z-20 sm:z-20">
-                            <ScrollArea className="max-h-40 z-10">
+                          <SelectContent className="">
+                            <ScrollArea className="h-40">
                               <SelectGroup>
                                 {cities.map((city) => (
                                   <SelectItem key={city.id} value={city.id}>
@@ -109,13 +115,13 @@ const Index = ({ auth, donors, cities }) => {
                         <Select
                           value={blood_type}
                           onValueChange={(value) => setBloodType(value)}
-                          className="ml-auto z-20 sm:z-20"
+                          className="ml-auto "
                         >
                           <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Select Blood Type" />
                           </SelectTrigger>
-                          <SelectContent className="z-20 sm:z-20">
-                            <ScrollArea className="max-h-40 z-10">
+                          <SelectContent className="">
+                            <ScrollArea className="h-40">
                               <SelectGroup>
                                 {bloodTypes.map((bloodType) => (
                                   <SelectItem
@@ -131,11 +137,34 @@ const Index = ({ auth, donors, cities }) => {
                         </Select>
                       </div>
                     </div>
+                    <div className="flex flex-col gap-1">
+                      <h3 className="text-sm font-semibold">Urgency Level</h3>
+                      <div className="mt-2 flex flex-col gap-4">
+                        <Select
+                          value={urgency}
+                          onValueChange={(value) => setUrgency(value)}
+                          className="ml-auto "
+                        >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select Urgency Level" />
+                          </SelectTrigger>
+                          <SelectContent className="">
+                            <ScrollArea className="max-h-40 z-10">
+                              <SelectGroup>
+                                <SelectItem value="normal">Normal</SelectItem>
+                                <SelectItem value="urgent">Urgent</SelectItem>
+                              </SelectGroup>
+                            </ScrollArea>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                     <Button
                       className="w-[100px]"
                       onClick={() => {
                         setCity("");
                         setBloodType("");
+                        setUrgency("");
                       }}
                     >
                       reset
@@ -150,10 +179,10 @@ const Index = ({ auth, donors, cities }) => {
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
                 <div className="grid gap-1">
                   <h1 className="text-2xl font-bold tracking-tight">
-                    All donors
+                    All posts
                   </h1>
                   <p className="text-gray-500 dark:text-gray-400">
-                    Find a donor near you
+                    Find a post near you
                   </p>
                 </div>
                 <div className="flex w-full gap-2 md:hidden">
@@ -180,7 +209,7 @@ const Index = ({ auth, donors, cities }) => {
                                 <SelectTrigger className="w-[180px]">
                                   <SelectValue placeholder="Select City" />
                                 </SelectTrigger>
-                                <SelectContent className="">
+                                <SelectContent>
                                   <ScrollArea className="max-h-40 z-10">
                                     <SelectGroup>
                                       {cities.map((city) => (
@@ -210,7 +239,7 @@ const Index = ({ auth, donors, cities }) => {
                                 <SelectTrigger className="w-[180px]">
                                   <SelectValue placeholder="Select Blood Type" />
                                 </SelectTrigger>
-                                <SelectContent className="">
+                                <SelectContent>
                                   <ScrollArea className="max-h-40 z-10">
                                     <SelectGroup>
                                       {bloodTypes.map((bloodType) => (
@@ -226,16 +255,45 @@ const Index = ({ auth, donors, cities }) => {
                                 </SelectContent>
                               </Select>
                             </div>
-                            <Button
-                              className="w-[100px] mx-auto"
-                              onClick={() => {
-                                setCity("");
-                                setBloodType("");
-                              }}
-                            >
-                              reset
-                            </Button>
                           </div>
+                          <div className="flex flex-col gap-1">
+                            <h3 className="text-sm font-semibold">
+                              Urgency Level
+                            </h3>
+                            <div className="mt-2 flex flex-col gap-4">
+                              <Select
+                                value={urgency}
+                                onValueChange={(value) => setUrgency(value)}
+                                className="ml-auto "
+                              >
+                                <SelectTrigger className="w-[180px]">
+                                  <SelectValue placeholder="Select Urgency Level" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <ScrollArea className="max-h-40 z-10">
+                                    <SelectGroup>
+                                      <SelectItem value="normal">
+                                        Normal
+                                      </SelectItem>
+                                      <SelectItem value="urgent">
+                                        Urgent
+                                      </SelectItem>
+                                    </SelectGroup>
+                                  </ScrollArea>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                          <Button
+                            className="w-[100px] mx-auto"
+                            onClick={() => {
+                              setCity("");
+                              setBloodType("");
+                              setUrgency("");
+                            }}
+                          >
+                            reset
+                          </Button>
                         </div>
                       </div>
                       <SheetFooter>
@@ -246,83 +304,68 @@ const Index = ({ auth, donors, cities }) => {
                 </div>
               </div>
               <div>
-                {donors.length > 0 ? (
-                  donors.map((donor) => (
+                {posts.length > 0 ? (
+                  posts.map((post) => (
                     <div
-                      key={donor.id}
+                      key={post.id}
                       className="items-center justify-between my-2 w-full sm:flex bg-gray-50 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
                     >
                       <div className="w-full">
                         <div className="flex w-full relative flex-col justify-between bg-white border border-gray-200 rounded-lg shadow sm:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
                           <Badge
                             className={
-                              "absolute end-3 top-2 bg-green-500 hover:bg-green-500"
+                              post.urgency_level == "normal"
+                                ? "absolute end-3 top-2 bg-green-500 hover:bg-green-500"
+                                : "absolute end-3 top-2 bg-red-500 hover:bg-red-500"
                             }
                           >
-                            {`Blood Type : ${donor.blood_type}`}
+                            {post.urgency_level}
                           </Badge>
                           <div className="flex w-full flex-col sm:flex-row">
-                            {/* <img
-                              className="object-cover sm:w-[150px] w-full rounded-t-lg md:rounded-none md:rounded-s-lg"
-                              src={
-                                donor.profile_pic
-                                  ? donor.profile_pic
-                                  : "/img/users/donor.svg"
-                              }
-                              alt=""
-                            /> */}
                             <div className="flex flex-col justify-between p-4 leading-normal">
                               <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                {donor.name}
+                                By : {post.requester.name}
                               </h5>
                               <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                                {donor.gender}
+                                Hospital Name : {post.hospital}
                               </p>
-                              <div className="flex-row sm:flex">
+                              <div className="flex-row sm:flex gap-10">
                                 <h5 className="mb-2 text-md font-medium tracking-tight text-gray-900 dark:text-white">
-                                  Last Donation :<br />
-                                  {donor.last_donation_date.split(" ")[0]}
+                                  City : {post.city.name}
                                 </h5>
-                                <span className="mx-4 sm:my-0"></span>
                                 <h5 className="mb-2 text-md font-medium tracking-tight text-gray-900 dark:text-white">
-                                  Phone1 : <br className="hidden" />
-                                  {donor.phone1}
+                                  Location : {post.location}
                                 </h5>
-                                <span className="mx-4 sm:my-0"></span>
                                 <h5 className="mb-2 text-md font-medium tracking-tight text-gray-900 dark:text-white">
-                                  Phone2 : <br className="hidden" />
-                                  {donor.phone2}
+                                  Blood Type : {post.blood_type}
                                 </h5>
-                                <span className="mx-4 sm:my-0"></span>
                                 <h5 className="mb-2 text-md font-medium tracking-tight text-gray-900 dark:text-white">
-                                  City: <br className="hidden" />
-                                  {donor.city.name}
+                                  Quantity: <br className="hidden" />
+                                  {post.quantity}
                                 </h5>
                               </div>
                             </div>
                           </div>
-                          <div className="items-center sm:pt-6 ">
+                          <div className=" sm:pt-6 ">
                             <Dialog>
                               <DialogTrigger asChild>
-                                <Button className="m-5">
-                                  Request Donation
-                                </Button>
+                                <Button className="m-5">Donate</Button>
                               </DialogTrigger>
                               <DialogContent className="sm:max-w-[425px]">
                                 {user ? (
                                   <div className="font-medium mx-auto py-4">
-                                    Are you sur you want to request a donation?
+                                    Are you sur you want to donate?
                                   </div>
                                 ) : (
                                   <div className="font-medium mx-auto py-4">
-                                    You must login to request a donation
+                                    You must login to donate
                                   </div>
                                 )}
                                 <DialogFooter className="mx-auto">
                                   {user ? (
                                     <Link href="/">
                                       <Badge className={"rounded-sm text-lg"}>
-                                        Request
+                                        post
                                       </Badge>
                                     </Link>
                                   ) : (
@@ -343,7 +386,7 @@ const Index = ({ auth, donors, cities }) => {
                 ) : (
                   <div className="flex items-center justify-center h-64 col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
                     <p className="text-gray-500 dark:text-gray-400">
-                      No donors found{city ? ` for the selected city` : ""}.
+                      No posts found{city ? ` for the selected city` : ""}.
                     </p>
                   </div>
                 )}

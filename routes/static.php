@@ -3,11 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/home', function () {
-    return Inertia::render('static/home');
-})->name('home');
 
+Route::get('/', function () {
+  return Inertia::render('static/home');
+});
 
-Route::get('/home3', function () {
-    return Inertia::render('static/home3');
-})->name('home3');
+Route::get('/donation-process', function () {
+  return Inertia::render('static/donationProcess');
+});

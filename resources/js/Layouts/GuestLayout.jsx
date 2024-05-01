@@ -8,7 +8,7 @@ export default function Guest({ children, user }) {
             <MainHeader user={user} />
         </div>
         
-        <main className="pt-[80px]">
+        <main className="pt-[80px] min-h-screen">
             {children}
         </main>
     </>

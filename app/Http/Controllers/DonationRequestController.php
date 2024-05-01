@@ -2,18 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
 use App\Models\DonationRequest;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class DonationRequestController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+  public function index()
+  {
+    return Inertia::render('requests/index', [
+      'requests' => DonationRequest::with('city')->get()->map(function ($request) {
+        return [
+          'id' => $request->id,
+          'bank' => $request->bank,
+          'requester' => $request->requester,
+          'hospital' => $request->hospital,
+          'blood_type' => $request->blood_type,
+          'quantity' => $request->quantity,
+          'city' => $request->city,
+          'location' => $request->location,
+          'urgency_level' => $request->urgency_level,
+          'status' => $request->status,
+        ];
+      }),
+      'cities' => City::orderBy('name', 'asc')->get(),
+    ]);
+  }
 
     /**
      * Show the form for creating a new resource.

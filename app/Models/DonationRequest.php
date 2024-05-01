@@ -9,4 +9,9 @@ class DonationRequest extends Model
 {
     use HasFactory;
     public $guarded = [];
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
 }

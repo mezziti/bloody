@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('donation_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('blood_bank_id')->constrained()->nullable();
             $table->foreignId('requester_id')->constrained('users');
+            $table->foreignId('donor_id')->constrained('users');
             $table->string('hospital_name');
-            $table->string('blood_type');
+            $table->enum('blood_type', ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']);
             $table->integer('quantity')->default(1);
             $table->foreignId('city_id')->constrained();
             $table->string('location');
             $table->enum('urgency_level', ['urgent','normal'])->default('normal');
-            $table->enum('status', ['active','inactive'])->default('active');
+            $table->enum('status', ['pending','approved','rejected'])->default('pending');
             $table->timestamps();
         });
     }

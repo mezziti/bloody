@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use App\Http\Controllers\Controller;
+use App\Models\City;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
@@ -19,58 +20,46 @@ use App\Providers\RouteServiceProvider;
 
 class RegisteredUserController extends Controller
 {
-    use IfFieldExistsTrait;
-    
-    public function create(): Response
-    {
-        return Inertia::render('Auth/Register');
+  use IfFieldExistsTrait;
+
+  public function create(): Response
+  {
+    return Inertia::render('Auth/Register', ['cities' => City::orderBy('name', 'asc')->get(),]);
+  }
+
+  /**
+   * Handle an incoming registration request.
+   *
+   * @throws \Illuminate\Validation\ValidationException
+   */
+  public function store(Request $request): RedirectResponse
+  {
+    $validatedData = $request->validate([
+      'name' => 'required|string|max:255',
+      'address' => 'nullable|string|max:255',
+      'role' => Rule::in(['donor', 'recipient','bank']),
+      'phone1' => 'required|string|max:10',
+      'phone2' => 'nullable|string|max:10',
+      'city_id' => 'required|string|max:255',
+      'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+      'password' => ['required', Rules\Password::defaults()],
+    ]);
+
+    if ($validatedData['role'] != 'bank') {
+      $validatedData['age'] = $request->validate(['age' => 'required|integer'])['age'];
+      $validatedData['gender'] = $request->validate(['gender' => Rule::in(['male', 'female'])])['gender'];
+      $validatedData['blood_type'] = $request->validate(['blood_type' => Rule::in(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])])['blood_type'];
+      $validatedData['last_donation_date'] = $request->validate(['last_donation_date' => 'nullable|date'])['last_donation_date'];
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        $validatedData=$request->validate([
-            'name' => 'required|string|max:255',
-            'age' => 'required|integer',
-            'type' => Rule::in(['Donor', 'Recipient']),
-            'gender' => Rule::in(['male', 'female']),
-            'blood_type' => Rule::in(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
-            'phone1' => 'required|string|max:10',
-            'city_id' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', Rules\Password::defaults()],
-        ]);
+    $validatedData['password'] = Hash::make($request->password);
 
-        if ($request->phone2) {
-            $validatedData['phone2']=$request->validate([
-                'phone2' => 'string|max:10'
-            ])['phone2'];
-        }
+    $user = User::create($validatedData);
 
-        if ($request->address) {
-            $validatedData['address']=$request->validate([
-            'address' => 'string|max:255',
-            ])['address'];
-        }
+    event(new Registered($user));
 
-        if ($request->last_donation_date) {
-            $validatedData['last_donation_date']=$request->validate([
-                'last_donation_date' => 'date'
-            ])['last_donation_date'];
-        }
+    Auth::login($user);
 
-        $validatedData['password'] = Hash::make($request->password);
-
-        $user = User::create($validatedData);
-
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return redirect(RouteServiceProvider::HOME);
-    }
+    return redirect(RouteServiceProvider::HOME);
+  }
 }

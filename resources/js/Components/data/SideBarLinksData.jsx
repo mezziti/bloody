@@ -1,14 +1,16 @@
 import { FolderHeart, HandHeart, CalendarHeart, FileHeart } from "lucide-react";
 
-export const navBarLinksData = [
+export const sideBarLinksData = [
   {
     name: "My Drives",
-    route: "mydrives",
+    route: "drives.index",
+    roles: ["bank"],
     icon: <CalendarHeart className="h-5 w-5" />,
   },
   {
-    name: "Posts",
+    name: "My Posts",
     route: "posts.index",
+    roles: ["bank", "donor", "recipient"],
     icon: <FileHeart className="h-5 w-5" />,
   },
 ];

@@ -1,14 +1,16 @@
-import Guest from "@/Layouts/GuestLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
+import { Authenticated } from "@/Layouts/AuthenticatedLayout";
 import { Button } from "@/Components/ui/button";
-import { Link } from "@inertiajs/react";
-import { ArrowUpDownIcon } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogTrigger,
-} from "@/Components/ui/dialog";
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/Components/ui/sheet";
+import { ScrollArea } from "@/Components/ui/scroll-area";
 import { Badge } from "@/Components/ui/badge";
 import {
   Select,
@@ -18,334 +20,291 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
-import {  useState } from "react";
-import { ScrollArea } from "@/Components/ui/scroll-area";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/Components/ui/alert-dialog";
+import { useState } from "react";
+import Paginate from "@/Components/Paginate";
 
-const Home = ({ auth, drives, cities }) => {
+const index = ({ auth, drives, cities }) => {
   const now = new Date();
-  drives = drives.filter((drive) => new Date(drive.end_date) > now);
-  const user = auth.user;
-  // const cities = [
-  //   {
-  //     'name':'city',
-  //     'id':'1',
-  //   },
-  //   {
-  //     'name':'city',
-  //     'id':'2',
-  //   },
-  //   {
-  //     'name':'city',
-  //     'id':'S',
-  //   },
-  //   {
-  //     'name':'cit899y',
-  //     'id':'SS',
-  //   },
-  //   {
-  //     'name':'ci8878ty',
-  //     'id':'iSd',
-  //   },
-  //   {
-  //     'name':'789',
-  //     'id':'iSSd',
-  //   },
-  //   {
-  //     'name':'45345',
-  //     'id':'Sid',
-  //   },
-  //   {
-  //     'name':'city3434',
-  //     'id':'SSid',
-  //   },
-  //   {
-  //     'name':'city66',
-  //     'id':'idD',
-  //   },
-  //   {
-  //     'name':'city55',
-  //     'id':'SiDd',
-  //   },
-  //   {
-  //     'name':'city34',
-  //     'id':'iSDDd',
-  //   },
-  //   {
-  //     'name':'city22',
-  //     'id':'id',
-  //   },
-  // ];
 
-  const [city, setCity] = useState('')
+  drives.data = drives.data.map((drive) => {
+    return new Date(drive.begin_date) > now
+      ? { ...drive, status: "upcoming" }
+      : new Date(drive.end_date) < now
+      ? { ...drive, status: "ended" }
+      : { ...drive, status: "active" };
+  });
 
-  drives = city
-    ? drives.filter((drive) => drive.city.id === city)
-    : drives;
+  const [city, setCity] = useState("");
+  const [status, setStatus] = useState("");
+
+  let drivesData = drives.data;
+
+  drivesData = city
+    ? drives.data.filter((drive) => drive.city_id == city)
+    : drives.data;
+
+  drivesData = status
+    ? drivesData.filter((drive) => drive.status == status)
+    : drivesData;
+
+  const handleDelete = (drive) => {
+    router.delete(route("drives.destroy", drive));
+  };
+
+  console.log(city);
+
   return (
-    <Guest user={user}>
-      <Head title="All Drives" />
-      <section className="pl-4 md:pl-6">
-        <div className="flex flex-col md:flex-row gap-4 xl:gap-8 max-w-7xl mx-auto items-start">
-          {/* <div className="w-full md:w-[300px] order-last md:order-first">
-            <div className="hidden md:block">
-              <Card className="border-0 shadow-none shrink-0">
-                <CardHeader className="p-4">
-                  <CardTitle className="text-lg">Filters</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <div className="grid gap-4">
+    <>
+      <Head title="My Drives" />
+      <Authenticated user={auth.user} pageName={"All Drives"}>
+        <div className="flex w-full gap-2">
+          <div className="gap-2 flex">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button>Filters</Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle className="mt-10 mx-auto">Filters</SheetTitle>
+                </SheetHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-4 mx-auto">
                     <div className="flex flex-col gap-1">
-                      <h3 className="text-sm font-semibold">Category</h3>
-                      <div className="grid gap-2 ml-4">
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="category-shoes" />
-                          Shoes
-                        </Label>
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="category-tops" />
-                          Tops & T-Shirts
-                        </Label>
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="category-shorts" />
-                          Shorts
-                        </Label>
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="category-hoodies" />
-                          Hoodies & Pullovers
-                        </Label>
+                      <h3 className="text-sm font-semibold">City</h3>
+                      <div className="grid gap-2">
+                        <Select
+                          value={city}
+                          onValueChange={(value) => setCity(value)}
+                          className="ml-auto "
+                        >
+                          <SelectTrigger className="">
+                            <SelectValue placeholder="Select City" />
+                          </SelectTrigger>
+                          <SelectContent className="">
+                            <ScrollArea className="max-h-40 z-10">
+                              <SelectGroup>
+                                {cities.map((city) => (
+                                  <SelectItem key={city.id} value={city.id}>
+                                    {city.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </ScrollArea>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <h3 className="text-sm font-semibold">Category</h3>
-                      <div className="grid gap-2 ml-4">
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="category-shoes" />
-                          Shoes
-                        </Label>
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="category-tops" />
-                          Tops & T-Shirts
-                        </Label>
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="category-shorts" />
-                          Shorts
-                        </Label>
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="category-hoodies" />
-                          Hoodies & Pullovers
-                        </Label>
+                      <h3 className="text-sm font-semibold">Status</h3>
+                      <div className="grid gap-2">
+                        <Select
+                          value={status}
+                          onValueChange={(value) => setStatus(value)}
+                          className="ml-auto "
+                        >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select Status" />
+                          </SelectTrigger>
+                          <SelectContent className="">
+                            <ScrollArea className="max-h-40 z-10">
+                              <SelectGroup>
+                                <SelectItem value="upcoming">
+                                  Upcoming
+                                </SelectItem>
+                                <SelectItem value="active">Active</SelectItem>
+                                <SelectItem value="ended">Ended</SelectItem>
+                              </SelectGroup>
+                            </ScrollArea>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <h3 className="text-sm font-semibold">Gender</h3>
-                      <div className="grid gap-2 ml-4">
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="gender-male" />
-                          Male
-                        </Label>
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="gender-female" />
-                          Female
-                        </Label>
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="gender-unisex" />
-                          Unisex
-                        </Label>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <h3 className="text-sm font-semibold">Kids</h3>
-                      <div className="grid gap-2 ml-4">
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="kids-boy" />
-                          Boy
-                        </Label>
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="kids-girl" />
-                          Girl
-                        </Label>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <h3 className="text-sm font-semibold">Color</h3>
-                      <div className="grid gap-2 ml-4">
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="color-black" />
-                          Black
-                        </Label>
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="color-red" />
-                          Red
-                        </Label>
-                        <Label className="flex items-center gap-2 font-normal">
-                          <Checkbox id="color-blue" />
-                          Blue
-                        </Label>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div> */}
-          <div className="w-full md:w-full pr-4 pb-4">
-            <div className="grid gap-6 md:gap-8">
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
-                <div className="grid gap-1">
-                  <h1 className="text-2xl font-bold tracking-tight">
-                    All Drives
-                  </h1>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    Find a blood drive near you
-                  </p>
-                </div>
-                <div className="flex sm:absolute sm:end-10 sm:mt-10 gap-2">
-                  <Select
-                    value={city}
-                    onValueChange={(value) => setCity(value)}
-                    className="ml-auto z-20 sm:z-20"
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select City" />
-                    </SelectTrigger>
-                    <SelectContent className="z-20 sm:z-20">
-                      <ScrollArea className="max-h-40 z-10">
-                        <SelectGroup>
-                          {cities.map((city) => (
-                            <SelectItem key={city.id} value={city.id}>
-                              {city.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </ScrollArea>
-                    </SelectContent>
-                  </Select>
-                  <Button onClick={() => setCity("")}>reset</Button>
-                </div>
-              </div>
-              <div>
-                {drives.length != 0 ? (
-                  drives.map((drive) => (
-                    <div
-                      key={drive.id}
-                      className="items-center justify-between my-2 w-full sm:flex bg-gray-50 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+                    <Button
+                      className="mx-auto"
+                      onClick={() => {
+                        setCity("");
+                        setStatus("");
+                      }}
                     >
-                      <div className="w-full">
-                        {new Date(drive.begin_date) > now ? (
-                          <Badge
-                            className={
-                              "absolute end-5 mt-1 bg-orange-500 hover:bg-orange-500"
-                            }
-                          >
-                            Upcoming
-                          </Badge>
-                        ) : new Date(drive.end_date) < now ? (
-                          <Badge
-                            className={
-                              "absolute end-5 mt-1 bg-red-500 hover:bg-red-500"
-                            }
-                          >
-                            Ended
-                          </Badge>
-                        ) : (
-                          <Badge
-                            className={
-                              "absolute end-5 mt-1 bg-green-500 hover:bg-green-500"
-                            }
-                          >
-                            Active
-                          </Badge>
-                        )}
-                        <div className="flex w-full flex-col justify-between bg-white border border-gray-200 rounded-lg shadow sm:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-                          <Link className="flex w-full flex-col sm:flex-row">
-                            <img
-                              className="object-cover sm:w-[150px] w-full rounded-t-lg md:rounded-none md:rounded-s-lg"
-                              src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/bonnie-green.png"
-                              alt=""
-                            />
-                            <div className="flex flex-col justify-between p-4 leading-normal">
-                              <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                      Reset
+                    </Button>
+                  </div>
+                </div>
+                <SheetFooter>
+                  <SheetClose asChild></SheetClose>
+                </SheetFooter>
+              </SheetContent>
+            </Sheet>
+            <Button
+              className="mx-auto"
+              onClick={() => {
+                setCity("");
+                setStatus("");
+              }}
+            >
+              Reset
+            </Button>
+          </div>
+          <Link
+            className="bg-primary w-auto px-5 text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            href={route("drives.create")}
+          >
+            Create Drive
+          </Link>
+        </div>
+        <div className="mt-4">
+          {drivesData.length > 0 ? (
+            <>
+              <section className="bg-gray-50 dark:bg-gray-900">
+                <div className="mx-auto">
+                  <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+                    <div className="overflow-auto">
+                      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                          <tr>
+                            <th scope="col" className="px-4 py-3">
+                              Name
+                            </th>
+                            <th scope="col" className="px-4 py-3">
+                              Description
+                            </th>
+                            <th scope="col" className="px-4 py-3">
+                              Status
+                            </th>
+                            <th scope="col" className="px-4 py-3">
+                              Begin Date
+                            </th>
+                            <th scope="col" className="px-4 py-3">
+                              End Date
+                            </th>
+                            <th scope="col" className="px-4 py-3">
+                              City
+                            </th>
+                            <th scope="col" className="px-4 py-3">
+                              Location
+                            </th>
+                            <th scope="col" className="px-4 py-3 text-end">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {drivesData.map((drive) => (
+                            <tr
+                              key={drive.id}
+                              className="border-b dark:border-gray-700"
+                            >
+                              <th
+                                scope="row"
+                                className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                              >
                                 {drive.name}
-                              </h5>
-                              <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                                {drive.description.length > 100
-                                  ? drive.description.slice(0, 100) + "..."
-                                  : drive.description}
-                              </p>
-                              <div className="flex-row sm:flex">
-                                <h5 className="mb-2 text-md font-medium tracking-tight text-gray-900 dark:text-white">
-                                  {`Organized by : ${drive.bloodBank.name}`}
-                                </h5>
-                                <span className="mx-4 sm:my-0"></span>
-                                <h5 className="mb-2 text-md font-medium tracking-tight text-gray-900 dark:text-white">
-                                  {`At : ${drive.city.name} - ${drive.location}`}
-                                </h5>
-                                <span className="mx-4 sm:my-0"></span>
-                                <h5 className="mb-2 text-md font-medium tracking-tight text-gray-900 dark:text-white">
-                                  {`From : ${drive.begin_date.split(" ")[0]}`}
-                                </h5>
-                                <span className="mx-4 sm:my-0"></span>
-                                <h5 className="mb-2 text-md font-medium tracking-tight text-gray-900 dark:text-white">
-                                  {`To : ${drive.end_date.split(" ")[0]}`}
-                                </h5>
-                              </div>
-                            </div>
-                          </Link>
-                          <div className="items-center sm:pt-6 ">
-                            {new Date(drive.end_date) > now ? (
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button className="m-5">Participate</Button>
-                                </DialogTrigger>
-                                <DialogContent className="sm:max-w-[425px]">
-                                  {user ? (
-                                    <div className="font-medium mx-auto py-4">
-                                      Are you sur you want to participate?
-                                    </div>
-                                  ) : (
-                                    <div className="font-medium mx-auto py-4">
-                                      You must login to participate
-                                    </div>
-                                  )}
-                                  <DialogFooter className="mx-auto">
-                                    {user ? (
-                                      <Link href="/">
-                                        <Badge className={"rounded-sm text-lg"}>
-                                          Participate
-                                        </Badge>
-                                      </Link>
-                                    ) : (
-                                      <Link href="/login">
-                                        <Badge className={"rounded-sm text-lg"}>
-                                          Login
-                                        </Badge>
-                                      </Link>
-                                    )}
-                                  </DialogFooter>
-                                </DialogContent>
-                              </Dialog>
-                            ) : (
-                              ""
-                            )}
-                          </div>
-                        </div>
+                              </th>
+                              <td className="px-4 py-3">{drive.description}</td>
+                              <td className="px-4 py-3">
+                                {drive.status == "upcoming" ? (
+                                  <Badge
+                                    className={
+                                      "bg-orange-500 hover:bg-orange-500"
+                                    }
+                                  >
+                                    Upcoming
+                                  </Badge>
+                                ) : drive.status == "active" ? (
+                                  <Badge
+                                    className={
+                                      "bg-green-500 hover:bg-green-500"
+                                    }
+                                  >
+                                    Active
+                                  </Badge>
+                                ) : (
+                                  <Badge
+                                    className={"bg-red-500 hover:bg-red-500"}
+                                  >
+                                    Ended
+                                  </Badge>
+                                )}
+                              </td>
+                              <td className="px-4 py-3 text-nowrap">
+                                {drive.begin_date.split(" ")[0]}
+                              </td>
+                              <td className="px-4 py-3 text-nowrap">
+                                {drive.end_date.split(" ")[0]}
+                              </td>
+                              <td className="px-4 py-3">{drive.city.name}</td>
+                              <td className="px-4 py-3">{drive.location}</td>
+                              <td className="px-4 py-3 flex items-center justify-end">
+                                <div className="flex gap-2">
+                                  <Link
+                                    className="w-auto px-5 py-[10px] border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                                    href={route("drives.edit", drive)}
+                                  >
+                                    Edit
+                                  </Link>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button>Delete</Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                          Are you absolutely sure?
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          This action cannot be undone. This
+                                          will permanently delete this drive and
+                                          remove it from our servers.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                          Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={(e) => handleDelete(drive)}
+                                        >
+                                          Delete
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <div className="p-2">
+                        <Paginate links={drives.links} />
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <div className="flex items-center justify-center h-64 col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-                    <p className="text-gray-500 dark:text-gray-400">
-                      No drives found{city ? ` for the selected city` : ""}.
-                    </p>
                   </div>
-                )}
-              </div>
+                </div>
+              </section>
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-64 col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+              <p className="text-gray-500 dark:text-gray-400">
+                No drives found.
+              </p>
             </div>
-          </div>
+          )}
         </div>
-      </section>
-    </Guest>
+      </Authenticated>
+    </>
   );
 };
 
-export default Home;
+export default index;

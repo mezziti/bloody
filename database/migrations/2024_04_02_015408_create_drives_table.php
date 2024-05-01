@@ -18,9 +18,8 @@ return new class extends Migration
             $table->string('location');
             $table->timestamp('begin_date');
             $table->timestamp('end_date');
-            $table->string('description');
-            $table->enum('status', ['upcoming','active','ended'])->default('upcoming');
-            $table->foreignId('blood_bank_id')->constrained();
+            $table->string('description')->nullable();
+            $table->foreignId('blood_bank_id')->constrained('users');
             $table->timestamps();
         });
     }

@@ -14,4 +14,14 @@ class BloodBank extends Model
     {
         return $this->hasMany(Drive::class);
     }
+
+    public function posts()
+    {
+        return $this->hasMany(DonationPost::class);
+    }
+
+  public function city()
+  {
+    return $this->belongsTo(City::class);
+  }
 }

@@ -1,23 +1,7 @@
 import { Head, useForm, Link } from "@inertiajs/react";
 import { Authenticated } from "@/Layouts/AuthenticatedLayout";
 import { Button } from "@/Components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogTrigger,
-} from "@/Components/ui/dialog";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/Components/ui/sheet";
 import { ScrollArea } from "@/Components/ui/scroll-area";
-import { Badge } from "@/Components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -26,26 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/Components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
 import { useEffect, useState } from "react";
 import { Label } from "@/Components/ui/label";
 import { Input } from "@/Components/ui/input";
@@ -61,12 +25,14 @@ import {
 } from "@/Components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 
-const index = ({ auth, cities }) => {
+const edit = ({ auth, drive, cities }) => {
 
-  const [begin_date, setBeginDate] = useState()
-  const [end_date, setEndDate] = useState();
-  const [city, setCity] = useState("");
-  const selectedCity = city ? cities.filter((c) => c.name === city) : "";
+  const [begin_date, setBeginDate] = useState(drive.begin_date);
+  const [end_date, setEndDate] = useState(drive.end_date);
+  const [city, setCity] = useState();
+  const selectedCity = city
+    ? cities.filter((c) => c.name === city)
+    : cities.filter((c) => c.id === drive.city_id);
 
   useEffect(() => {
     selectedCity ? setData("city_id", selectedCity[0].id + "") : "";
@@ -82,30 +48,24 @@ const index = ({ auth, cities }) => {
       : "";
   }, [end_date]);
 
-  const { data, setData, post, processing, errors } = useForm({
-    name: "",
-    description: "",
-    location: "",
-    begin_date: "",
-    end_date: "",
-    city_id: "",
+  const { data, setData, put, processing, errors } = useForm({
+    name: drive.name,
+    description: drive.description,
+    location: drive.location,
+    begin_date: drive.begin_date.split(" ")[0],
+    end_date: drive.end_date.split(" ")[0],
+    city_id: drive.city_id + "",
   });
 
   const submit = (e) => {
     e.preventDefault();
-
-    post(route("drives.store"));
+    put(route("drives.update", drive.id));
   };
-
-  const user = auth.user
-  const now = new Date();
-
-  
 
   return (
     <>
-      <Head title="Create Drive" />
-      <Authenticated user={auth.user} pageName={"Create New Drive"}>
+      <Head title="Edit Drive" />
+      <Authenticated user={auth.user} pageName={"Edit Drive"}>
         <form onSubmit={submit}>
           <div className="bg-white rounded-lg">
             <div className="grid gap-4 p-5">
@@ -114,8 +74,8 @@ const index = ({ auth, cities }) => {
                   <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"
-                    type="text"
                     name="name"
+                    type="text"
                     value={data.name}
                     className="mt-1 block w-full"
                     autoComplete="name"
@@ -126,7 +86,9 @@ const index = ({ auth, cities }) => {
                 <div className="grid gap-2">
                   <Label htmlFor="city">City</Label>
                   <Select
-                    value={city}
+                    id="city"
+                    name="city"
+                    value={selectedCity[0].name}
                     onValueChange={(value) => setCity(value)}
                     className="ml-auto "
                   >
@@ -177,7 +139,7 @@ const index = ({ auth, cities }) => {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="begin_date">Begin Date</Label>
-                  <Popover>
+                  <Popover id="begin_date" name="begin_date">
                     <PopoverTrigger asChild>
                       <Button
                         variant={"outline"}
@@ -207,7 +169,7 @@ const index = ({ auth, cities }) => {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="end_date">End Date</Label>
-                  <Popover>
+                  <Popover id="end_date" name="end_date">
                     <PopoverTrigger asChild>
                       <Button
                         variant={"outline"}
@@ -233,12 +195,12 @@ const index = ({ auth, cities }) => {
                       />
                     </PopoverContent>
                   </Popover>
-                  <InputError message={errors.begin_date} className="mt-2" />
+                  <InputError message={errors.end_date} className="mt-2" />
                 </div>
               </div>
               <div className="flex gap-2">
                 <Button disabled={processing} className="w-20">
-                  Create
+                  Edit
                 </Button>
                 <Link
                   className="w-auto px-5 border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
@@ -255,6 +217,6 @@ const index = ({ auth, cities }) => {
   );
 };
 
-export default index;
+export default edit;
 
 

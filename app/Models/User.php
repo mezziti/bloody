@@ -38,4 +38,19 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(DonationPost::class);
+    }
+
+  public function drives()
+  {
+    return $this->hasMany(Drive::class);
+  }
 }

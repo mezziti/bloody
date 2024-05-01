@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('age');
-            $table->enum('type', ['donor','recipient'])->default('recipient');
-            $table->enum('gender', ['male','female']);
-            $table->enum('blood_type', ['A+','A-','B+','B-','AB+','AB-','O+','O-']);
+            $table->integer('age')->nullable();
+            $table->enum('role', ['donor','recipient','bank'])->default('recipient');
+            $table->enum('gender', ['male','female'])->nullable();
+            $table->enum('blood_type', ['A+','A-','B+','B-','AB+','AB-','O+','O-'])->nullable();
             $table->string('phone1');
             $table->string('phone2')->nullable();
             $table->foreignId('city_id')->constrained();

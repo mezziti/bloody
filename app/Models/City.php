@@ -7,16 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class City extends Model
 {
-    use HasFactory;
-    public $guarded = [];
+  use HasFactory;
+  protected $guarded = [];
+  public $timestamps = false;
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+  public function users()
+  {
+    return $this->hasMany(User::class);
+  }
 
-    public function drives()
-    {
-        return $this->hasMany(Drive::class);
-    }
+  public function drives()
+  {
+    return $this->hasMany(Drive::class);
+  }
+
+  public function posts()
+  {
+    return $this->hasMany(DonationPost::class);
+  }
 }
