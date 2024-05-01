@@ -17,7 +17,7 @@ import HeaderLink from "./HeaderLink";
 
 const DashboardHeader = ({ user }) => {
   return (
-    <header className="flex bg-white h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+    <header className="flex bg-white h-14 py-5 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0 md:hidden">
@@ -77,7 +77,6 @@ const DashboardHeader = ({ user }) => {
                     Profile
                   </Link>
                 </DropdownMenuItem>
-                {/* <DropdownMenuSeparator /> */}
                 <DropdownMenuItem>
                   <Link
                     className="text-center flex gap-2 w-full mx-auto"

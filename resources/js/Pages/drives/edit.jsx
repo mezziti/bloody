@@ -199,15 +199,15 @@ const edit = ({ auth, drive, cities }) => {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button disabled={processing} className="w-20">
-                  Edit
-                </Button>
                 <Link
                   className="w-auto px-5 border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                   href={route("drives.index")}
                 >
                   Cancel
                 </Link>
+                <Button disabled={processing} className="w-20">
+                  Edit
+                </Button>
               </div>
             </div>
           </div>

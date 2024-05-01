@@ -53,4 +53,9 @@ class User extends Authenticatable
   {
     return $this->hasMany(Drive::class);
   }
+
+  public function participations()
+  {
+    return $this->belongsToMany(Drive::class);
+  }
 }

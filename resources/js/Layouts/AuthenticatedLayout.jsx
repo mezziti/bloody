@@ -15,7 +15,6 @@ export function Authenticated({ user, pageName, children }) {
                 <ApplicationLogo />
               </Link>
             </div>
-
             <ScrollArea>
               <div className="my-10">
                 <SideBarLinks user={user} />
@@ -25,7 +24,6 @@ export function Authenticated({ user, pageName, children }) {
         </div>
         <div className="flex flex-col h-screen">
           <DashboardHeader user={user} />
-
           <ScrollArea className="w-full">
             <ScrollArea className="h-full">
               <main className="flex max-w-1/2 bg-gray-100 flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -34,7 +32,7 @@ export function Authenticated({ user, pageName, children }) {
                     {pageName}
                   </h1>
                 </div>
-                <div>{children}</div>
+                <div className="overflow-x-auto">{children}</div>
               </main>
             </ScrollArea>
             <ScrollBar orientation="horizontal" />

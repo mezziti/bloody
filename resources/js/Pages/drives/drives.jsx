@@ -20,10 +20,20 @@ import {
 import { useState } from "react";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
-import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/Components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/Components/ui/sheet";
+import Paginate from "@/Components/Paginate";
 
-const Index = ({ auth, drives, cities }) => {
+const Index = ({ auth, allDrives, cities }) => {
   const now = new Date();
+  let drives = allDrives.data;
 
   drives = drives.map((drive) => {
     return new Date(drive.begin_date) > now
@@ -117,205 +127,195 @@ const Index = ({ auth, drives, cities }) => {
             </div>
           </div>
           <div className="w-full md:w-full pr-4 pb-4">
-            <div className="grid gap-6 md:gap-8">
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
-                <div className="grid gap-1">
-                  <h1 className="text-2xl font-bold tracking-tight">
+            <section className=" dark:bg-gray-900">
+              <div className="px-4 mx-auto max-w-screen-xl lg:py-5 lg:px-6">
+                <div className="mx-auto max-w-screen-sm text-center lg:mb-16 mb-4">
+                  <h2 className="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
                     All Drives
-                  </h1>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    Find a blood drive near you
+                  </h2>
+                  <p className="mb-4 font-light text-gray-500 sm:text-xl dark:text-gray-400">
+                    Find a drive near you
                   </p>
-                </div>
-                <div className="flex w-full gap-2 md:hidden">
-                  <Sheet>
-                    <SheetTrigger asChild>
-                      <Button>Filters</Button>
-                    </SheetTrigger>
-                    <SheetContent>
-                      <SheetHeader>
-                        <SheetTitle className="mt-10 mx-auto">
-                          Filters
-                        </SheetTitle>
-                      </SheetHeader>
-                      <div className="grid gap-4 py-4">
-                        <div className="grid gap-4 mx-auto">
-                          <div className="flex flex-col gap-1">
-                            <h3 className="text-sm font-semibold">City</h3>
-                            <div className="grid gap-2">
-                              <Select
-                                value={city}
-                                onValueChange={(value) => setCity(value)}
-                                className="ml-auto "
-                              >
-                                <SelectTrigger className="w-[180px]">
-                                  <SelectValue placeholder="Select City" />
-                                </SelectTrigger>
-                                <SelectContent className="">
-                                  <ScrollArea className="max-h-40 z-10">
-                                    <SelectGroup>
-                                      {cities.map((city) => (
-                                        <SelectItem
-                                          key={city.id}
-                                          value={city.id}
-                                        >
-                                          {city.name}
+                  <div className="flex w-full gap-2 md:hidden">
+                    <Sheet>
+                      <SheetTrigger asChild>
+                        <Button>Filters</Button>
+                      </SheetTrigger>
+                      <SheetContent>
+                        <SheetHeader>
+                          <SheetTitle className="mt-10 mx-auto">
+                            Filters
+                          </SheetTitle>
+                        </SheetHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid gap-4 mx-auto">
+                            <div className="flex flex-col gap-1">
+                              <h3 className="text-sm font-semibold">City</h3>
+                              <div className="grid gap-2">
+                                <Select
+                                  value={city}
+                                  onValueChange={(value) => setCity(value)}
+                                  className="ml-auto "
+                                >
+                                  <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select City" />
+                                  </SelectTrigger>
+                                  <SelectContent className="">
+                                    <ScrollArea className="max-h-40 z-10">
+                                      <SelectGroup>
+                                        {cities.map((city) => (
+                                          <SelectItem
+                                            key={city.id}
+                                            value={city.id}
+                                          >
+                                            {city.name}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectGroup>
+                                    </ScrollArea>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              <h3 className="text-sm font-semibold">Status</h3>
+                              <div className="grid gap-2">
+                                <Select
+                                  value={status}
+                                  onValueChange={(value) => setStatus(value)}
+                                  className="ml-auto "
+                                >
+                                  <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select Status" />
+                                  </SelectTrigger>
+                                  <SelectContent className="">
+                                    <ScrollArea className="max-h-40 z-10">
+                                      <SelectGroup>
+                                        <SelectItem value="upcoming">
+                                          Upcoming
                                         </SelectItem>
-                                      ))}
-                                    </SelectGroup>
-                                  </ScrollArea>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-                          <div className="flex flex-col gap-1">
-                            <h3 className="text-sm font-semibold">Status</h3>
-                            <div className="grid gap-2">
-                              <Select
-                                value={status}
-                                onValueChange={(value) => setStatus(value)}
-                                className="ml-auto "
+                                        <SelectItem value="active">
+                                          Active
+                                        </SelectItem>
+                                      </SelectGroup>
+                                    </ScrollArea>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <Button
+                                className="w-[100px] mx-auto"
+                                onClick={() => {
+                                  setCity("");
+                                  setStatus("");
+                                }}
                               >
-                                <SelectTrigger className="w-[180px]">
-                                  <SelectValue placeholder="Select Status" />
-                                </SelectTrigger>
-                                <SelectContent className="">
-                                  <ScrollArea className="max-h-40 z-10">
-                                    <SelectGroup>
-                                      <SelectItem value="upcoming">
-                                        Upcoming
-                                      </SelectItem>
-                                      <SelectItem value="active">
-                                        Active
-                                      </SelectItem>
-                                    </SelectGroup>
-                                  </ScrollArea>
-                                </SelectContent>
-                              </Select>
+                                reset
+                              </Button>
                             </div>
-                            <Button
-                              className="w-[100px] mx-auto"
-                              onClick={() => {
-                                setCity("");
-                                setStatus("");
-                              }}
-                            >
-                              reset
-                            </Button>
                           </div>
                         </div>
-                      </div>
-                      <SheetFooter>
-                        <SheetClose asChild></SheetClose>
-                      </SheetFooter>
-                    </SheetContent>
-                  </Sheet>
+                        <SheetFooter>
+                          <SheetClose asChild></SheetClose>
+                        </SheetFooter>
+                      </SheetContent>
+                    </Sheet>
+                  </div>
                 </div>
-              </div>
-              <div>
-                {drives.length != 0 ? (
-                  drives.map((drive) => (
-                    <div
-                      key={drive.id}
-                      className="items-center justify-between my-2 w-full sm:flex bg-gray-50 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
-                    >
-                      <div className="w-full">
-                        <div className="flex relative w-full flex-col justify-between bg-white border border-gray-200 rounded-lg shadow sm:flex-row hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+                <div className="grid gap-8 lg:grid-cols-2">
+                  {drives.length > 0 ? (
+                    drives.map((drive) => (
+                      <article
+                        key={drive.id}
+                        className="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
+                      >
+                        <div className="flex justify-between items-center mb-5 text-gray-500">
                           {drive.status == "upcoming" ? (
                             <Badge
-                              className={
-                                "absolute end-3 top-2 bg-orange-500 hover:bg-orange-500"
-                              }
+                              className={"bg-orange-500 hover:bg-orange-500"}
                             >
                               Upcoming
                             </Badge>
                           ) : drive.status == "active" ? (
                             <Badge
-                              className={
-                                "absolute end-3 top-2 bg-green-500 hover:bg-green-500"
-                              }
+                              className={"bg-green-500 hover:bg-green-500"}
                             >
                               Active
                             </Badge>
                           ) : (
                             ""
                           )}
-                          <div className="flex w-full flex-col sm:flex-row">
-                            <div className="flex flex-col justify-between p-4 leading-normal">
-                              <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                {drive.name}
-                              </h5>
-                              <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                                {drive.description.length > 100
-                                  ? drive.description.slice(0, 100) + "..."
-                                  : drive.description}
-                              </p>
-                              <div className="flex-row sm:flex gap-10">
-                                <h5 className="mb-2 text-md font-medium tracking-tight text-gray-900 dark:text-white">
-                                  {`Organized by : ${drive.bank.name}`}
-                                </h5>
-                                <h5 className="mb-2 text-md font-medium tracking-tight text-gray-900 dark:text-white">
-                                  {`At : ${drive.city.name} - ${drive.location}`}
-                                </h5>
-                                <h5 className="mb-2 text-md font-medium tracking-tight text-gray-900 dark:text-white">
-                                  {`From : ${drive.begin_date.split(" ")[0]}`}
-                                </h5>
-                                <h5 className="mb-2 text-md font-medium tracking-tight text-gray-900 dark:text-white">
-                                  {`To : ${drive.end_date.split(" ")[0]}`}
-                                </h5>
-                              </div>
-                            </div>
+                          <span className="bg-red-100 text-red-800 text-xs sm:text-lg font-medium px-2.5 py-0.5 rounded-lg dark:bg-red-200 dark:text-red-800">
+                            {`From : ${drive.begin_date.split(" ")[0]}`} <br />
+                            {`To : ${drive.end_date.split(" ")[0]}`}
+                          </span>
+                        </div>
+                        <h2 className="mb-4 text-md sm:text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                          Drive Name: {drive.name}
+                        </h2>
+                        <h2 className="mb-2 text-md sm:text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+                          City: {drive.city.name}
+                        </h2>
+                        <h2 className="mb-2  text-md sm:text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+                          Location: {drive.location}
+                        </h2>
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center space-x-4">
+                            <Link
+                              href={`/banks/${drive.bank.id}`}
+                              className="my-4  text-md sm:text-xl font-bold tracking-tight text-gray-900 dark:text-white"
+                            >
+                              By: {drive.bank.name}
+                            </Link>
                           </div>
-                          <div className="items-center sm:pt-6 ">
-                            {new Date(drive.end_date) > now ? (
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button className="m-5">Participate</Button>
-                                </DialogTrigger>
-                                <DialogContent className="sm:max-w-[425px]">
+                          <div>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button>Participate</Button>
+                              </DialogTrigger>
+                              <DialogContent className="sm:max-w-[425px]">
+                                {user ? (
+                                  <div className="font-medium mx-auto py-4">
+                                    Are you sur you want to participate?
+                                  </div>
+                                ) : (
+                                  <div className="font-medium mx-auto py-4">
+                                    You must login to participate
+                                  </div>
+                                )}
+                                <DialogFooter className="mx-auto">
                                   {user ? (
-                                    <div className="font-medium mx-auto py-4">
-                                      Are you sur you want to participate?
-                                    </div>
+                                    <Link href="/">
+                                      <Badge className={"rounded-sm text-lg"}>
+                                        Participate
+                                      </Badge>
+                                    </Link>
                                   ) : (
-                                    <div className="font-medium mx-auto py-4">
-                                      You must login to participate
-                                    </div>
+                                    <Link href="/login">
+                                      <Badge className={"rounded-sm text-lg"}>
+                                        Login
+                                      </Badge>
+                                    </Link>
                                   )}
-                                  <DialogFooter className="mx-auto">
-                                    {user ? (
-                                      <Link href="/">
-                                        <Badge className={"rounded-sm text-lg"}>
-                                          Participate
-                                        </Badge>
-                                      </Link>
-                                    ) : (
-                                      <Link href="/login">
-                                        <Badge className={"rounded-sm text-lg"}>
-                                          Login
-                                        </Badge>
-                                      </Link>
-                                    )}
-                                  </DialogFooter>
-                                </DialogContent>
-                              </Dialog>
-                            ) : (
-                              ""
-                            )}
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
                           </div>
                         </div>
-                      </div>
+                      </article>
+                    ))
+                  ) : (
+                    <div className="flex items-center justify-center h-64 col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+                      <p className="text-gray-500 dark:text-gray-400">
+                        No drives found{city ? ` for the selected city` : ""}.
+                      </p>
                     </div>
-                  ))
-                ) : (
-                  <div className="flex items-center justify-center h-64 col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-                    <p className="text-gray-500 dark:text-gray-400">
-                      No drives found{city ? ` for the selected city` : ""}.
-                    </p>
-                  </div>
-                )}
+                  )}
+                </div>
+                <div className="p-2">
+                  <Paginate links={allDrives.links} />
+                </div>
               </div>
-            </div>
+            </section>
           </div>
         </div>
       </section>

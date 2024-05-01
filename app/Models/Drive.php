@@ -17,6 +17,11 @@ class Drive extends Model
 
   public function bank()
   {
-    return $this->belongsTo(User::class, 'blood_bank_id');
+    return $this->belongsTo(User::class);
+  }
+
+  public function participants() 
+  {
+    return $this->belongsToMany(User::class,'participant_drive')->withPivot('status');
   }
 }

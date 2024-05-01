@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('blood_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('blood_bank_id')->constrained('users');
+            $table->foreignId('bank_id')->constrained('users');
             $table->foreignId('requester_id')->constrained('users');
             $table->string('hospital_name');
             $table->enum('blood_type', ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']);

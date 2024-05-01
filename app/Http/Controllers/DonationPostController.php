@@ -82,6 +82,6 @@ class DonationPostController extends Controller
       return abort(404, 'Post Not Fond');
     }
     DonationPost::destroy($donationPost->id);
-    return redirect()->route('posts.index');
+    return redirect()->back();
   }
 }

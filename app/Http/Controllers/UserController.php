@@ -28,6 +28,15 @@ class UserController extends Controller
     ]);
   }
 
+  public function showDonor(User $donor)
+  {
+    if ($donor->role != "donor") {
+      return abort(404,'Donor Not Found');
+    }
+    $donor = $donor->load('city');
+    return inertia('donors/show',['donor' => $donor]);
+  }
+
   public function banks()
   {
     return Inertia::render('banks/index', [
@@ -44,5 +53,14 @@ class UserController extends Controller
       }),
       'cities' => City::orderBy('name', 'asc')->get(),
     ]);
+  }
+
+  public function showBank(User $bank)
+  {
+    if ($bank->role != "bank") {
+      return abort(404, 'Bank Not Found');
+    }
+    $bank = $bank->load('city');
+    return inertia('banks/show', ['bank' => $bank]);
   }
 }

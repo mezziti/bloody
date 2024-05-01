@@ -16,7 +16,6 @@ import { Input } from "@/Components/ui/input";
 import InputError from "@/Components/InputError";
 
 const index = ({ auth, cities }) => {
-
   const bloodTypes = [
     {
       name: "A+",
@@ -43,7 +42,7 @@ const index = ({ auth, cities }) => {
       name: "O-",
     },
   ];
-  
+
   const [city, setCity] = useState("");
   const selectedCity = city ? cities.filter((c) => c.name === city) : "";
 
@@ -66,8 +65,6 @@ const index = ({ auth, cities }) => {
 
     post(route("posts.store"));
   };
-
-  
 
   return (
     <>
@@ -214,15 +211,15 @@ const index = ({ auth, cities }) => {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button disabled={processing} className="w-20">
-                  Create
-                </Button>
                 <Link
                   className="w-auto px-5 border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
                   href={route("posts.index")}
                 >
                   Cancel
                 </Link>
+                <Button disabled={processing} className="w-20">
+                  Create
+                </Button>
               </div>
             </div>
           </div>
@@ -233,5 +230,3 @@ const index = ({ auth, cities }) => {
 };
 
 export default index;
-
-

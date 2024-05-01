@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('donation_records', function (Blueprint $table) {
             $table->id();
             $table->foreignId('donor_id')->constrained('users');
-            $table->foreignId('blood_bank_id')->constrained('users');
+            $table->foreignId('bank_id')->constrained('users');
             $table->foreignId('drive_id')->constrained()->nullable();
             $table->timestamp('donation_date');
             $table->string('blood_type');

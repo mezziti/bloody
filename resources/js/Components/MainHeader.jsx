@@ -4,7 +4,6 @@ import { SheetContent, SheetTrigger, Sheet } from "@/Components/ui/sheet.jsx";
 import ApplicationLogo from "./ApplicationLogo";
 import HeaderLink from "./HeaderLink";
 import NavLink from "./NavLink";
-import { Home } from "lucide-react";
 import { MainHeaderLinkData } from "./data/mainHeaderLinksData";
 
 const MainHeader = ({ user }) => {
@@ -30,12 +29,22 @@ const MainHeader = ({ user }) => {
         })}
       </nav>
       {user ? (
-        <Link
-          href={route("dashboard")}
-          className="ml-auto font-semibold bg-primary rounded-md text-white px-4 py-3 lg:ml-4 hover:bg-red-700 hidden md:flex"
-        >
-          Dashboard
-        </Link>
+        <div className="flex gap-2 justify-center">
+          <Link
+            href={route("dashboard")}
+            className="ml-auto font-semibold bg-primary rounded-md text-white px-4 py-3 lg:ml-4 hover:bg-red-700 hidden md:flex"
+          >
+            Dashboard
+          </Link>
+          <Link
+            className="border border-input bg-background hover:bg-accent hover:text-accent-foreground ml-auto font-semibold rounded-md text-black px-4 py-3 lg:ml-4 hidden md:flex"
+            href={route("logout")}
+            method="post"
+            as="button"
+          >
+            Logout
+          </Link>
+        </div>
       ) : (
         <div className="flex gap-2 justify-center">
           <Link
@@ -46,7 +55,7 @@ const MainHeader = ({ user }) => {
           </Link>
           <Link
             href={route("register")}
-            className="justify-center border-2 border-primary font-semibold rounded-md text-black px-4 py-3 lg:ml-4 hover:bg-primary hover:text-white hidden md:flex"
+            className="border border-input bg-background hover:bg-accent hover:text-accent-foreground ml-auto font-semibold rounded-md text-black px-4 py-3 lg:ml-4 hidden md:flex"
           >
             Register
           </Link>
@@ -74,12 +83,20 @@ const MainHeader = ({ user }) => {
               );
             })}
             {user ? (
-              <Link
-                href={route("dashboard")}
-                className="m-4 justify-center font-semibold bg-primary rounded-md text-white px-4 py-3 lg:ml-4 hover:bg-red-700 flex"
-              >
-                Dashboard
-              </Link>
+              <div className="flex gap-2 justify-center">
+                <Link
+                  href={route("dashboard")}
+                  className="m-4 justify-center font-semibold bg-primary rounded-md text-white px-4 py-3 lg:ml-4 hover:bg-red-700 flex"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href={route("logout")}
+                  className="border border-input bg-background hover:bg-accent hover:text-accent-foreground ml-auto font-semibold rounded-md text-black px-4 py-3 lg:ml-4 hidden md:flex"
+                >
+                  Logout
+                </Link>
+              </div>
             ) : (
               <div className="flex gap-2 justify-center">
                 <Link
@@ -90,7 +107,7 @@ const MainHeader = ({ user }) => {
                 </Link>
                 <Link
                   href={route("register")}
-                  className="mt-4 justify-center font-semibold rounded-md text-black px-4 py-3 lg:ml-4 hover:bg-primary hover:text-white flex"
+                  className="border border-input bg-background hover:bg-accent hover:text-accent-foreground mt-4 justify-center font-semibold rounded-md text-black px-4 py-3 lg:ml-4 hover:bg-red-700 flex"
                 >
                   Register
                 </Link>

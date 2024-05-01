@@ -24,6 +24,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/donors', [UserController::class, 'donors'])->name('donors');
+Route::get('/donors/{donor}', [UserController::class, 'showDonor'])->name('donors.show');
+Route::get('/banks/{bank}', [UserController::class, 'showBank'])->name('banks.show');
 Route::get('/banks', [UserController::class, 'banks'])->name('banks');
 Route::get('/drives', [GuestPagesController::class, 'drives'])->name('drives');
 Route::get('/requests', [GuestPagesController::class, 'requests'])->name('requests');
