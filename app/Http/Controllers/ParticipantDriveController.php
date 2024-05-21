@@ -19,6 +19,9 @@ class ParticipantDriveController extends Controller
   public function store(Request $request)
   {
     $driveId = $request->input('drive_id');
+    if (auth()->user()->role == 'bank') {
+      return redirect()->route('drives')->with('session', ['id' =>$driveId, 'message' =>"You can't participate", 'type' => 'text-primary']);
+    }
     if (ParticipantDrive::where('user_id', auth()->id())->where('drive_id', $driveId)->exists()) {
       return redirect()->route('drives')->with('session', ['id' =>$driveId, 'message' =>'You are already participated', 'type' => 'text-primary']);
     }

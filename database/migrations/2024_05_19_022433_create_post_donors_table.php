@@ -11,10 +11,13 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('participant_drive', function (Blueprint $table) {
-      $table->foreignId('user_id');
-      $table->foreignId('drive_id');
+    Schema::create('post_donors', function (Blueprint $table) {
+      $table->id();
+      $table->foreignId('donor_id');
+      $table->foreignId('post_id');
       $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+      $table->string('message')->nullable();
+      $table->timestamps();
     });
   }
 
@@ -23,6 +26,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('participant_drive');
+    Schema::dropIfExists('post_donors');
   }
 };

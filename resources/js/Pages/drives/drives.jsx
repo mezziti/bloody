@@ -1,5 +1,5 @@
 import Guest from "@/Layouts/GuestLayout";
-import { Head } from "@inertiajs/react";
+import { Head, router, useForm } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import { Link } from "@inertiajs/react";
 import {
@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import {
@@ -30,8 +30,9 @@ import {
   SheetTrigger,
 } from "@/Components/ui/sheet";
 import Paginate from "@/Components/Paginate";
+import InputError from "@/Components/InputError";
 
-const Index = ({ auth, allDrives, cities }) => {
+const Index = ({ auth, allDrives, cities, session }) => {
   const now = new Date();
   let drives = allDrives.data;
 
@@ -50,6 +51,22 @@ const Index = ({ auth, allDrives, cities }) => {
 
   drives = city ? drives.filter((drive) => drive.city.id === city) : drives;
   drives = status ? drives.filter((drive) => drive.status === status) : drives;
+
+  const { data, setData, post, processing } = useForm({
+    drive_id: null,
+  });
+
+  const participate = (id) => {
+    setData("drive_id", id);
+  };
+
+  useEffect(() => {
+    if (data.drive_id !== null) {
+      post(route("participants.store"));
+    }
+  }, [data.drive_id]);
+
+
   return (
     <Guest user={user}>
       <Head title="All Drives" />
@@ -274,9 +291,21 @@ const Index = ({ auth, allDrives, cities }) => {
                               </DialogTrigger>
                               <DialogContent className="sm:max-w-[425px]">
                                 {user ? (
-                                  <div className="font-medium mx-auto py-4">
-                                    Are you sur you want to participate?
-                                  </div>
+                                  session ? (
+                                    session.id == drive.id ? (
+                                      <div className={`font-medium mx-auto py-4 ${session.type}`}>
+                                        {session.message}
+                                      </div>
+                                    ) : (
+                                      <div className="font-medium mx-auto py-4">
+                                        Are you sur you want to participate?
+                                      </div>
+                                    )
+                                  ) : (
+                                    <div className="font-medium mx-auto py-4">
+                                      Are you sur you want to participate?
+                                    </div>
+                                  )
                                 ) : (
                                   <div className="font-medium mx-auto py-4">
                                     You must login to participate
@@ -284,11 +313,25 @@ const Index = ({ auth, allDrives, cities }) => {
                                 )}
                                 <DialogFooter className="mx-auto">
                                   {user ? (
-                                    <Link href="/">
-                                      <Badge className={"rounded-sm text-lg"}>
+                                    session ? (
+                                      session.id == drive.id ? (
+                                        ""
+                                      ) : (
+                                        <Button
+                                          disabled={processing}
+                                          onClick={() => participate(drive.id)}
+                                        >
+                                          Participate
+                                        </Button>
+                                      )
+                                    ) : (
+                                      <Button
+                                        disabled={processing}
+                                        onClick={() => participate(drive.id)}
+                                      >
                                         Participate
-                                      </Badge>
-                                    </Link>
+                                      </Button>
+                                    )
                                   ) : (
                                     <Link href="/login">
                                       <Badge className={"rounded-sm text-lg"}>

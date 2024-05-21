@@ -1,5 +1,5 @@
 import Guest from "@/Layouts/GuestLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import {
   Dialog,
@@ -14,7 +14,7 @@ import {
   SelectGroup,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/Components/ui/select";
 import { useState } from "react";
 import { ScrollArea } from "@/Components/ui/scroll-area";
@@ -26,10 +26,14 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger
+  SheetTrigger,
 } from "@/Components/ui/sheet";
-const Index = ({ auth, donors, cities }) => {
+import { Label } from "@/Components/ui/label";
+import { Input } from "@/Components/ui/input";
+import InputError from "@/Components/InputError";
 
+
+const Index = ({ auth, donors, cities, session }) => {
   const bloodTypes = [
     {
       name: "A+",
@@ -63,7 +67,22 @@ const Index = ({ auth, donors, cities }) => {
   const [blood_type, setBloodType] = useState("");
 
   donors = city ? donors.filter((donor) => donor.city.id === city) : donors;
-  donors = blood_type ? donors.filter((donor) => donor.blood_type === blood_type) : donors;
+  donors = blood_type
+    ? donors.filter((donor) => donor.blood_type === blood_type)
+    : donors;
+
+  const { data, setData, post, processing, errors } = useForm({
+    donor_id: null,
+    hospital_name: "",
+    blood_type: "",
+    quantity: "",
+    city_id: "",
+    location: "",
+    urgency_level: "",
+  });
+
+  console.log(data)
+
   return (
     <Guest user={user}>
       <Head title="All donors" />
@@ -257,25 +276,444 @@ const Index = ({ auth, donors, cities }) => {
                           <div>
                             <Dialog>
                               <DialogTrigger asChild>
-                                <Button>Request Donation</Button>
+                                <Button
+                                  onClick={() => setData("donor_id", donor.id)}
+                                >
+                                  Request Blood
+                                </Button>
                               </DialogTrigger>
                               <DialogContent className="sm:max-w-[425px]">
                                 {user ? (
-                                  <div className="font-medium mx-auto py-4">
-                                    Are you sur you want to request donation?
-                                  </div>
+                                  session ? (
+                                    session.id == donor.id ? (
+                                      <div
+                                        className={`font-medium mx-auto py-4 ${session.type}`}
+                                      >
+                                        {session.message}
+                                      </div>
+                                    ) : (
+                                      <ScrollArea className="h-[300px]">
+                                        <div className="font-medium mx-auto py-4">
+                                          Are you sur you want to request blood?
+                                        </div>
+                                        <div className="grid md:grid-cols-2 gap-10">
+                                          <div>
+                                            <div className="grid gap-2 mb-4">
+                                              <Label htmlFor="hospital_name">
+                                                Hospital Name
+                                                <span className="text-primary">
+                                                  *
+                                                </span>
+                                              </Label>
+                                              <Input
+                                                id="hospital_name"
+                                                type="text"
+                                                name="hospital_name"
+                                                value={data.hospital_name}
+                                                className="mt-1 block w-full"
+                                                autoComplete="name"
+                                                onChange={(e) => {
+                                                  setData(
+                                                    "hospital_name",
+                                                    e.target.value
+                                                  );
+                                                }}
+                                              />
+                                              <InputError
+                                                message={errors.hospital_name}
+                                              />
+                                              <InputError
+                                                message={errors.donor_id}
+                                              />
+                                            </div>
+                                            <div className="grid gap-2 mb-4">
+                                              <Label htmlFor="city">City</Label>
+                                              <Select
+                                                value={data.city_id}
+                                                onValueChange={(value) =>
+                                                  setData("city_id", value)
+                                                }
+                                                className="ml-auto "
+                                              >
+                                                <SelectTrigger>
+                                                  <SelectValue placeholder="Select City" />
+                                                </SelectTrigger>
+                                                <SelectContent className="">
+                                                  <ScrollArea className="max-h-40 z-10">
+                                                    <SelectGroup>
+                                                      {cities.map((city) => (
+                                                        <SelectItem
+                                                          key={city.id}
+                                                          value={city.id}
+                                                        >
+                                                          {city.name}
+                                                        </SelectItem>
+                                                      ))}
+                                                    </SelectGroup>
+                                                  </ScrollArea>
+                                                </SelectContent>
+                                              </Select>
+                                              <InputError
+                                                message={errors.city_id}
+                                                className="mt-2"
+                                              />
+                                            </div>
+                                            <div className="grid gap-2 mb-4">
+                                              <Label htmlFor="location">
+                                                location
+                                              </Label>
+                                              <Input
+                                                id="location"
+                                                type="text"
+                                                name="location"
+                                                value={data.location}
+                                                className="mt-1 block w-full"
+                                                autoComplete="name"
+                                                onChange={(e) =>
+                                                  setData(
+                                                    "location",
+                                                    e.target.value
+                                                  )
+                                                }
+                                              />
+                                              <InputError
+                                                message={errors.location}
+                                              />
+                                            </div>
+                                          </div>
+                                          <div>
+                                            <div className="grid gap-2 mb-4">
+                                              <Label htmlFor="blood_type">
+                                                Blood Type
+                                                <span className="text-primary">
+                                                  *
+                                                </span>
+                                              </Label>
+                                              <Select
+                                                name="blood_type"
+                                                id="blood_type"
+                                                value={data.blood_type}
+                                                onValueChange={(value) =>
+                                                  setData("blood_type", value)
+                                                }
+                                              >
+                                                <SelectTrigger>
+                                                  <SelectValue placeholder="Select Blood Type">
+                                                    {data.blood_type}
+                                                  </SelectValue>
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                  <SelectGroup>
+                                                    {bloodTypes.map(
+                                                      (bloodType) => (
+                                                        <SelectItem
+                                                          key={bloodType.name}
+                                                          value={bloodType.name}
+                                                        >
+                                                          {bloodType.name}
+                                                        </SelectItem>
+                                                      )
+                                                    )}
+                                                  </SelectGroup>
+                                                </SelectContent>
+                                              </Select>
+                                              <InputError
+                                                message={errors.blood_type}
+                                                className="mt-2"
+                                              />
+                                            </div>
+                                            <div className="grid gap-2 mb-4">
+                                              <Label htmlFor="quantity">
+                                                Quantity
+                                                <span className="text-primary">
+                                                  *
+                                                </span>
+                                              </Label>
+                                              <Input
+                                                id="quantity"
+                                                type="number"
+                                                name="quantity"
+                                                value={data.quantity}
+                                                className="mt-1 block w-full"
+                                                autoComplete="name"
+                                                onChange={(e) =>
+                                                  setData(
+                                                    "quantity",
+                                                    e.target.value
+                                                  )
+                                                }
+                                              />
+                                              <InputError
+                                                message={errors.quantity}
+                                              />
+                                            </div>
+                                            <div className="grid gap-2 mb-4">
+                                              <Label htmlFor="urgency_level">
+                                                Urgency
+                                                <span className="text-primary">
+                                                  *
+                                                </span>
+                                              </Label>
+                                              <Select
+                                                name="urgency_level"
+                                                id="urgency_level"
+                                                value={data.urgency_level}
+                                                onValueChange={(value) =>
+                                                  setData(
+                                                    "urgency_level",
+                                                    value
+                                                  )
+                                                }
+                                              >
+                                                <SelectTrigger>
+                                                  <SelectValue placeholder="Select Your urgency_level">
+                                                    {data.urgency_level}
+                                                  </SelectValue>
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                  <SelectGroup>
+                                                    <SelectItem value="normal">
+                                                      normal
+                                                    </SelectItem>
+                                                    <SelectItem value="urgent">
+                                                      Urgent
+                                                    </SelectItem>
+                                                  </SelectGroup>
+                                                </SelectContent>
+                                              </Select>
+                                              <InputError
+                                                message={errors.urgency_level}
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </ScrollArea>
+                                    )
+                                  ) : (
+                                    <ScrollArea className="h-[300px]">
+                                      <div className="font-medium mx-auto py-4">
+                                        Are you sur you want to request blood?
+                                      </div>
+                                      <div className="grid md:grid-cols-2 gap-10">
+                                        <div>
+                                          <div className="grid gap-2 mb-4">
+                                            <Label htmlFor="hospital_name">
+                                              Hospital Name
+                                              <span className="text-primary">
+                                                *
+                                              </span>
+                                            </Label>
+                                            <Input
+                                              id="hospital_name"
+                                              type="text"
+                                              name="hospital_name"
+                                              value={data.hospital_name}
+                                              className="mt-1 block w-full"
+                                              autoComplete="name"
+                                              onChange={(e) => {
+                                                setData(
+                                                  "hospital_name",
+                                                  e.target.value
+                                                );
+                                              }}
+                                            />
+                                            <InputError
+                                              message={errors.hospital_name}
+                                            />
+                                            <InputError
+                                              message={errors.donor_id}
+                                            />
+                                          </div>
+                                          <div className="grid gap-2 mb-4">
+                                            <Label htmlFor="city">City</Label>
+                                            <Select
+                                              value={data.city_id}
+                                              onValueChange={(value) =>
+                                                setData("city_id", value)
+                                              }
+                                              className="ml-auto "
+                                            >
+                                              <SelectTrigger>
+                                                <SelectValue placeholder="Select City" />
+                                              </SelectTrigger>
+                                              <SelectContent className="">
+                                                <ScrollArea className="max-h-40 z-10">
+                                                  <SelectGroup>
+                                                    {cities.map((city) => (
+                                                      <SelectItem
+                                                        key={city.id}
+                                                        value={city.id}
+                                                      >
+                                                        {city.name}
+                                                      </SelectItem>
+                                                    ))}
+                                                  </SelectGroup>
+                                                </ScrollArea>
+                                              </SelectContent>
+                                            </Select>
+                                            <InputError
+                                              message={errors.city_id}
+                                              className="mt-2"
+                                            />
+                                          </div>
+                                          <div className="grid gap-2 mb-4">
+                                            <Label htmlFor="location">
+                                              location
+                                            </Label>
+                                            <Input
+                                              id="location"
+                                              type="text"
+                                              name="location"
+                                              value={data.location}
+                                              className="mt-1 block w-full"
+                                              autoComplete="name"
+                                              onChange={(e) =>
+                                                setData(
+                                                  "location",
+                                                  e.target.value
+                                                )
+                                              }
+                                            />
+                                            <InputError
+                                              message={errors.location}
+                                            />
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <div className="grid gap-2 mb-4">
+                                            <Label htmlFor="blood_type">
+                                              Blood Type
+                                              <span className="text-primary">
+                                                *
+                                              </span>
+                                            </Label>
+                                            <Select
+                                              name="blood_type"
+                                              id="blood_type"
+                                              value={data.blood_type}
+                                              onValueChange={(value) =>
+                                                setData("blood_type", value)
+                                              }
+                                            >
+                                              <SelectTrigger>
+                                                <SelectValue placeholder="Select Blood Type">
+                                                  {data.blood_type}
+                                                </SelectValue>
+                                              </SelectTrigger>
+                                              <SelectContent>
+                                                <SelectGroup>
+                                                  {bloodTypes.map(
+                                                    (bloodType) => (
+                                                      <SelectItem
+                                                        key={bloodType.name}
+                                                        value={bloodType.name}
+                                                      >
+                                                        {bloodType.name}
+                                                      </SelectItem>
+                                                    )
+                                                  )}
+                                                </SelectGroup>
+                                              </SelectContent>
+                                            </Select>
+                                            <InputError
+                                              message={errors.blood_type}
+                                              className="mt-2"
+                                            />
+                                          </div>
+                                          <div className="grid gap-2 mb-4">
+                                            <Label htmlFor="quantity">
+                                              Quantity
+                                              <span className="text-primary">
+                                                *
+                                              </span>
+                                            </Label>
+                                            <Input
+                                              id="quantity"
+                                              type="number"
+                                              name="quantity"
+                                              value={data.quantity}
+                                              className="mt-1 block w-full"
+                                              autoComplete="name"
+                                              onChange={(e) =>
+                                                setData(
+                                                  "quantity",
+                                                  e.target.value
+                                                )
+                                              }
+                                            />
+                                            <InputError
+                                              message={errors.quantity}
+                                            />
+                                          </div>
+                                          <div className="grid gap-2 mb-4">
+                                            <Label htmlFor="urgency_level">
+                                              Urgency
+                                              <span className="text-primary">
+                                                *
+                                              </span>
+                                            </Label>
+                                            <Select
+                                              name="urgency_level"
+                                              id="urgency_level"
+                                              value={data.urgency_level}
+                                              onValueChange={(value) =>
+                                                setData("urgency_level", value)
+                                              }
+                                            >
+                                              <SelectTrigger>
+                                                <SelectValue placeholder="Select Your urgency_level">
+                                                  {data.urgency_level}
+                                                </SelectValue>
+                                              </SelectTrigger>
+                                              <SelectContent>
+                                                <SelectGroup>
+                                                  <SelectItem value="normal">
+                                                    normal
+                                                  </SelectItem>
+                                                  <SelectItem value="urgent">
+                                                    Urgent
+                                                  </SelectItem>
+                                                </SelectGroup>
+                                              </SelectContent>
+                                            </Select>
+                                            <InputError
+                                              message={errors.urgency_level}
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </ScrollArea>
+                                  )
                                 ) : (
                                   <div className="font-medium mx-auto py-4">
-                                    You must login to request donation
+                                    You must login to request blood
                                   </div>
                                 )}
                                 <DialogFooter className="mx-auto">
                                   {user ? (
-                                    <Link href="/">
-                                      <Badge className={"rounded-sm text-lg"}>
+                                    session ? (
+                                      session.id == donor.id ? (
+                                        ""
+                                      ) : (
+                                        <Button
+                                          disabled={processing}
+                                          onClick={() =>
+                                            post(route("donationRequests.store"))
+                                          }
+                                        >
+                                          Request
+                                        </Button>
+                                      )
+                                    ) : (
+                                      <Button
+                                        disabled={processing}
+                                        onClick={() =>
+                                          post(route("donationRequests.store"))
+                                        }
+                                      >
                                         Request
-                                      </Badge>
-                                    </Link>
+                                      </Button>
+                                    )
                                   ) : (
                                     <Link href="/login">
                                       <Badge className={"rounded-sm text-lg"}>

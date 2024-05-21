@@ -12,34 +12,19 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     * 
-     * @var array<int, string>
-     */
     protected $guarded = [];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+  protected $hidden = [
+    'password',
+    'remember_token',
+  ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
+  protected $casts = [
+    'email_verified_at' => 'datetime',
+    'password' => 'hashed',
+  ];
 
-    public function city()
+  public function city()
     {
         return $this->belongsTo(City::class);
     }
@@ -56,6 +41,16 @@ class User extends Authenticatable
 
   public function participations()
   {
-    return $this->belongsToMany(Drive::class);
+    return $this->belongsToMany(Drive::class, 'participant_drives')->withPivot('status', 'id', 'message');
+  }
+
+  public function donations()
+  {
+    return $this->belongsToMany(DonationPost::class, 'post_donors', 'donor_id', 'post_id')->withPivot('status', 'id', 'message');
+  }
+
+  public function requesters()
+  {
+    return $this->belongsToMany(BloodRequest::class, 'blood_bank')->withPivot('status', 'id', 'message');
   }
 }

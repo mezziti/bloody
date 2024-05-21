@@ -1,8 +1,13 @@
 <?php
 
+use App\Http\Controllers\BloodRequestController;
 use App\Http\Controllers\DonationPostController;
+use App\Http\Controllers\DonationRecordController;
+use App\Http\Controllers\DonationRequestController;
 use App\Http\Controllers\DriveController;
 use App\Http\Controllers\GuestPagesController;
+use App\Http\Controllers\ParticipantDriveController;
+use App\Http\Controllers\PostDonorController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -32,9 +37,19 @@ Route::get('/requests', [GuestPagesController::class, 'requests'])->name('reques
 
 
 Route::middleware('auth')->prefix('dashboard')->group(function() {
+  Route::put('/approve/{id}', [DriveController::class, 'approve'])->name('approve');
+  Route::put('/reject/{id}', [DriveController::class, 'reject'])->name('reject');
+  Route::get('/participations', [UserController::class, 'participations'])->name('participations');
+  Route::get('/MyDonations', [UserController::class, 'donations'])->name('donations');
+  Route::get('/donationRequests/MyRequests', [DonationRequestController::class, 'myRequests'])->name('donationRequests.myRequests');
   Route::resources([
     'drives' => DriveController::class,
     'posts' => DonationPostController::class,
+    'participants' => ParticipantDriveController::class,
+    'bloodRequests' => BloodRequestController::class,
+    'donationRequests' => DonationRequestController::class,
+    'records' => DonationRecordController::class,
+    'donations' => PostDonorController::class,
   ]);
 });
 

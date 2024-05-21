@@ -199,7 +199,9 @@ const index = ({ auth, posts, cities }) => {
                                 scope="row"
                                 className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                               >
-                                {p.hospital_name}
+                                <Link href={route("posts.show", p)}>
+                                  {p.hospital_name}
+                                </Link>
                               </th>
                               <td className="px-4 py-3">{p.blood_type}</td>
                               <td className="px-4 py-3">

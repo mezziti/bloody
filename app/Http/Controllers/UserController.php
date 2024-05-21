@@ -25,6 +25,7 @@ class UserController extends Controller
         ];
       }),
       'cities' => City::orderBy('name', 'asc')->get(),
+      'session' => session('session'),
     ]);
   }
 
@@ -52,6 +53,7 @@ class UserController extends Controller
         ];
       }),
       'cities' => City::orderBy('name', 'asc')->get(),
+      'session' => session('session'),
     ]);
   }
 
@@ -62,5 +64,27 @@ class UserController extends Controller
     }
     $bank = $bank->load('city');
     return inertia('banks/show', ['bank' => $bank]);
+  }
+
+  public function participations()
+  {
+    $participant = User::findOrFail(auth()->id());
+    // dd($participant);
+    $participant = $participant->load(['city', 'participations']);
+    return Inertia::render('donors/participations', [
+      'participant' => $participant,
+      'cities' => City::orderBy('name', 'asc')->get(),
+    ]);
+  }
+
+  public function donations()
+  {
+    $donor = User::findOrFail(auth()->id());
+    // dd($donor);
+    $donor = $donor->load(['city', 'donations']);
+    return Inertia::render('donors/donations', [
+      'donor' => $donor,
+      'cities' => City::orderBy('name', 'asc')->get(),
+    ]);
   }
 }

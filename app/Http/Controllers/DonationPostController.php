@@ -31,8 +31,8 @@ class DonationPostController extends Controller
       'location' => 'string|max:255',
       'blood_type' => Rule::in(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
       'quantity' => 'required|integer|max:255',
-      'city_id' => 'required|string|max:255',
       'urgency_level' => Rule::in(['urgent', 'normal']),
+      'city_id' => 'required|string|max:255',
       'status' => Rule::in(['active', 'inactive']),
     ]);
     $validatedData['requester_id'] = auth()->id();
@@ -40,8 +40,13 @@ class DonationPostController extends Controller
     return redirect()->route('posts.index');
   }
 
-  public function show(DonationPost $donationPost)
+  public function show($id)
   {
+    $donationPost = DonationPost::find($id)->load(['city', 'donors']);
+    // dd($donationPost);
+    return Inertia::render('posts/show', [
+      'post' => $donationPost,
+    ]);
   }
 
   public function edit($id)

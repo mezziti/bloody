@@ -37,7 +37,7 @@ class RegisteredUserController extends Controller
     $validatedData = $request->validate([
       'name' => 'required|string|max:255',
       'address' => 'nullable|string|max:255',
-      'role' => Rule::in(['donor', 'recipient','bank']),
+      'role' => Rule::in(['donor', 'recipient', 'bank']),
       'phone1' => 'required|string|max:10',
       'phone2' => 'nullable|string|max:10',
       'city_id' => 'required|string|max:255',
@@ -50,6 +50,8 @@ class RegisteredUserController extends Controller
       $validatedData['gender'] = $request->validate(['gender' => Rule::in(['male', 'female'])])['gender'];
       $validatedData['blood_type'] = $request->validate(['blood_type' => Rule::in(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])])['blood_type'];
       $validatedData['last_donation_date'] = $request->validate(['last_donation_date' => 'nullable|date'])['last_donation_date'];
+    } else {
+      $validatedData['status'] = 'inactive';
     }
 
     $validatedData['password'] = Hash::make($request->password);
@@ -57,9 +59,12 @@ class RegisteredUserController extends Controller
     $user = User::create($validatedData);
 
     event(new Registered($user));
+    if ($validatedData['status'] == 'active') {
+      Auth::login($user);
+      return redirect(RouteServiceProvider::HOME);
+    } else {
+      return redirect()->route('login')->with('status', 'Your account has been created successfully. Please wait to activate it the');
+    }
 
-    Auth::login($user);
-
-    return redirect(RouteServiceProvider::HOME);
   }
 }

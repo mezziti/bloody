@@ -14,40 +14,40 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
-    public function create(): Response
-    {
-        return Inertia::render('Auth/Login', [
-            'canResetPassword' => Route::has('password.request'),
-            'status' => session('status'),
-        ]);
+  
+  public function create(): Response
+  {
+    return Inertia::render('Auth/Login', [
+      'canResetPassword' => Route::has('password.request'),
+      'status' => session('status'),
+    ]);
+  }
+
+  
+  public function store(LoginRequest $request): RedirectResponse
+  {
+    $request->authenticate();
+    if (auth()->user()->status != 'active' && auth()->user()->role == 'bank') {
+      Auth::guard('web')->logout();
+      $request->session()->invalidate();
+      $request->session()->regenerateToken();
+      return redirect()->route('login')->with('status', 'Your account is inactive. Please contact the ');
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
-    public function store(LoginRequest $request): RedirectResponse
-    {
-        $request->authenticate();
+    $request->session()->regenerate();
 
-        $request->session()->regenerate();
+    return redirect()->intended(RouteServiceProvider::HOME);
+  }
 
-        return redirect()->intended(RouteServiceProvider::HOME);
-    }
+  
+  public function destroy(Request $request): RedirectResponse
+  {
+    Auth::guard('web')->logout();
 
-    /**
-     * Destroy an authenticated session. 
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        Auth::guard('web')->logout();
+    $request->session()->invalidate();
 
-        $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
-        $request->session()->regenerateToken();
-
-        return redirect('/');
-    }
+    return redirect('/');
+  }
 }

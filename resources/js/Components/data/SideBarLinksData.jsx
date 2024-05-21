@@ -1,16 +1,47 @@
-import { FolderHeart, HandHeart, CalendarHeart, FileHeart } from "lucide-react";
-
 export const sideBarLinksData = [
+  {
+    name: "Dashboard",
+    route: "dashboard",
+    roles: ["bank", "donor", "recipient"],
+  },
   {
     name: "My Drives",
     route: "drives.index",
     roles: ["bank"],
-    icon: <CalendarHeart className="h-5 w-5" />,
+  },
+  {
+    name: "Records",
+    route: "records.index",
+    roles: ["bank"],
+  },
+  {
+    name: "My Participations",
+    route: "participations",
+    roles: ["donor"],
+  },
+  {
+    name: "Blood Requests",
+    route: "bloodRequests.index",
+    roles: ["donor", "recipient", "bank"],
+  },
+  {
+    name: "Donation Requests",
+    route: "donationRequests.index",
+    roles: ["donor"],
+  },
+  {
+    name: "My Donation Requests",
+    route: "donationRequests.myRequests",
+    roles: ["donor", "recipient", "bank"],
   },
   {
     name: "My Posts",
     route: "posts.index",
     roles: ["bank", "donor", "recipient"],
-    icon: <FileHeart className="h-5 w-5" />,
+  },
+  {
+    name: "Donations",
+    route: "donations",
+    roles: ["donor"],
   },
 ];

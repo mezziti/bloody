@@ -22,6 +22,6 @@ class Drive extends Model
 
   public function participants() 
   {
-    return $this->belongsToMany(User::class,'participant_drive')->withPivot('status');
+    return $this->belongsToMany(User::class,'participant_drives')->withPivot('status','id');
   }
 }

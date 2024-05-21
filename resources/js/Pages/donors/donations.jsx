@@ -34,24 +34,25 @@ import {
 import { useState } from "react";
 import Paginate from "@/Components/Paginate";
 
-const index = ({ auth, participant, cities }) => {
+const index = ({ auth, donor, cities }) => {
   const [city, setCity] = useState("");
   const [status, setStatus] = useState("");
 
-  let participations = participant.participations;
+  let donations = donor.donations;
 
-  participations = city
-    ? participant.participations.filter((participant) => participant.city_id == city)
-    : participant.participations;
+  donations = city
+    ? donor.donations.filter((donor) => donor.city_id == city)
+    : donor.donations;
 
-  participations = status
-    ? participations.filter((participant) => participant.pivot.status == status)
-    : participations;
+  donations = status
+    ? donations.filter((donor) => donor.pivot.status == status)
+    : donations;
 
+  console.log(donor);
   return (
     <>
-      <Head title="My participants" />
-      <Authenticated user={auth.user} pageName={"All participants"}>
+      <Head title="My donors" />
+      <Authenticated user={auth.user} pageName={"All donors"}>
         <div className="flex w-full gap-2">
           <div className="gap-2 flex">
             <Sheet>
@@ -103,9 +104,13 @@ const index = ({ auth, participant, cities }) => {
                           <SelectContent className="">
                             <ScrollArea className="max-h-40 z-10">
                               <SelectGroup>
-                                <SelectItem value="approved">Approved</SelectItem>
+                                <SelectItem value="approved">
+                                  Approved
+                                </SelectItem>
                                 <SelectItem value="pending">Pending</SelectItem>
-                                <SelectItem value="rejected">Rejected</SelectItem>
+                                <SelectItem value="rejected">
+                                  Rejected
+                                </SelectItem>
                               </SelectGroup>
                             </ScrollArea>
                           </SelectContent>
@@ -140,7 +145,7 @@ const index = ({ auth, participant, cities }) => {
           </div>
         </div>
         <div className="mt-4">
-          {participations.length > 0 ? (
+          {donations.length > 0 ? (
             <>
               <section className="bg-gray-50 dark:bg-gray-900">
                 <div className="mx-auto">
@@ -150,10 +155,19 @@ const index = ({ auth, participant, cities }) => {
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                           <tr>
                             <th scope="col" className="px-4 py-3">
-                              Drive Name
+                              Hospital Name
+                            </th>
+                            <th scope="col" className="px-4 py-3">
+                              Blood Type
                             </th>
                             <th scope="col" className="px-4 py-3">
                               City
+                            </th>
+                            <th scope="col" className="px-4 py-3">
+                              Location
+                            </th>
+                            <th scope="col" className="px-4 py-3">
+                              Qt.
                             </th>
                             <th scope="col" className="px-4 py-3">
                               Status
@@ -164,7 +178,7 @@ const index = ({ auth, participant, cities }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {participations.map((p) => (
+                          {donations.map((p) => (
                             <tr
                               key={p.id}
                               className="border-b dark:border-gray-700"
@@ -173,16 +187,17 @@ const index = ({ auth, participant, cities }) => {
                                 scope="row"
                                 className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                               >
-                                {/* <Link href={route('drives.show', p.id)}> */}
-                                {p.name}
-                                {/* </Link> */}
+                                {p.hospital_name}
                               </th>
+                              <td className="px-4 py-3">{p.blood_type}</td>
                               <td className="px-4 py-3">
                                 {
                                   cities.filter((c) => p.city_id == c.id)[0]
                                     .name
                                 }
                               </td>
+                              <td className="px-4 py-3">{p.location}</td>
+                              <td className="px-4 py-3">{p.quantity}</td>
                               <td className="px-4 py-3">
                                 {p.pivot.status == "approved" ? (
                                   <Badge
@@ -194,7 +209,9 @@ const index = ({ auth, participant, cities }) => {
                                   </Badge>
                                 ) : p.pivot.status == "pending" ? (
                                   <Badge
-                                    className={"bg-orange-500 hover:bg-orange-500"}
+                                    className={
+                                      "bg-orange-500 hover:bg-orange-500"
+                                    }
                                   >
                                     Pending
                                   </Badge>
@@ -219,7 +236,7 @@ const index = ({ auth, participant, cities }) => {
           ) : (
             <div className="flex items-center justify-center h-64 col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
               <p className="text-gray-500 dark:text-gray-400">
-                No participants found.
+                No donors found.
               </p>
             </div>
           )}

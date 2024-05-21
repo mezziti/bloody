@@ -1,5 +1,5 @@
 import Guest from "@/Layouts/GuestLayout";
-import { Head } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import { Link } from "@inertiajs/react";
 import {
@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import {
@@ -30,7 +30,7 @@ import {
   SheetTrigger,
 } from "@/Components/ui/sheet";
 import Paginate from "@/Components/Paginate";
-const Index = ({ auth, allPosts, cities }) => {
+const posts = ({ auth, allPosts, cities, session }) => {
   const bloodTypes = [
     {
       name: "A+",
@@ -74,6 +74,22 @@ const Index = ({ auth, allPosts, cities }) => {
   posts = urgency
     ? posts.filter((post) => post.urgency_level === urgency)
     : posts;
+
+    const { data, setData, post, processing } = useForm({
+      post_id: null,
+    });
+
+  const donate = (id) => {
+    setData("post_id", id);
+  };
+
+  useEffect(() => {
+    if (data.post_id !== null) {
+      post(route("donations.store"));
+    }
+  }, [data.post_id]);
+
+  console.log(session)
   return (
     <Guest user={user}>
       <Head title="All posts" />
@@ -350,37 +366,69 @@ const Index = ({ auth, allPosts, cities }) => {
                             </Link>
                           </div>
                           <div>
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button>Donate</Button>
-                              </DialogTrigger>
-                              <DialogContent className="sm:max-w-[425px]">
-                                {user ? (
-                                  <div className="font-medium mx-auto py-4">
-                                    Are you sur you want to donate?
-                                  </div>
-                                ) : (
-                                  <div className="font-medium mx-auto py-4">
-                                    You must login to donate
-                                  </div>
-                                )}
-                                <DialogFooter className="mx-auto">
+                            {auth.user.role == "donor" && (
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button>donate</Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[425px]">
                                   {user ? (
-                                    <Link href="/">
-                                      <Badge className={"rounded-sm text-lg"}>
-                                        Donate
-                                      </Badge>
-                                    </Link>
+                                    session ? (
+                                      session.id == post.id ? (
+                                        <div
+                                          className={`font-medium mx-auto py-4 ${session.type}`}
+                                        >
+                                          {session.message}
+                                        </div>
+                                      ) : (
+                                        <div className="font-medium mx-auto py-4">
+                                          Are you sur you want to donate?
+                                        </div>
+                                      )
+                                    ) : (
+                                      <div className="font-medium mx-auto py-4">
+                                        Are you sur you want to donate?
+                                      </div>
+                                    )
                                   ) : (
-                                    <Link href="/login">
-                                      <Badge className={"rounded-sm text-lg"}>
-                                        Login
-                                      </Badge>
-                                    </Link>
+                                    <div className="font-medium mx-auto py-4">
+                                      You must login to donate
+                                    </div>
                                   )}
-                                </DialogFooter>
-                              </DialogContent>
-                            </Dialog>
+                                  <DialogFooter className="mx-auto">
+                                    {user ? (
+                                      session ? (
+                                        session.id == post.id ? (
+                                          ""
+                                        ) : (
+                                          <Button
+                                            disabled={processing}
+                                            onClick={() =>
+                                              donate(post.id)
+                                            }
+                                          >
+                                            donate
+                                          </Button>
+                                        )
+                                      ) : (
+                                        <Button
+                                          disabled={processing}
+                                          onClick={() => donate(post.id)}
+                                        >
+                                          donate
+                                        </Button>
+                                      )
+                                    ) : (
+                                      <Link href="/login">
+                                        <Badge className={"rounded-sm text-lg"}>
+                                          Login
+                                        </Badge>
+                                      </Link>
+                                    )}
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                            )}
                           </div>
                         </div>
                       </article>
@@ -405,4 +453,4 @@ const Index = ({ auth, allPosts, cities }) => {
   );
 };
 
-export default Index;
+export default posts;

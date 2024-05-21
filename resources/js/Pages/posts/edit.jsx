@@ -83,7 +83,7 @@ const edit = ({ auth, donationPost, cities }) => {
                     id="hospital_name"
                     type="text"
                     name="hospital_name"
-                    value={data.hospital_name}
+                    value={data.hospital_name} 
                     className="mt-1 block w-full"
                     onChange={(e) => setData("hospital_name", e.target.value)}
                   />

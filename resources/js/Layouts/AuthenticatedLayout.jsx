@@ -5,7 +5,7 @@ import DashboardHeader from "@/Components/DashboardHeader.jsx";
 import SideBarLinks from "@/Components/SideBarLinks";
 
 export function Authenticated({ user, pageName, children }) {
-  return (
+  return ( 
     <div className="w-screen flex">
       <div className="bg-gray-100 sm:grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden bg-white border-r bg-muted/40 md:block">

@@ -19,4 +19,10 @@ class DonationPost extends Model
   {
     return $this->belongsTo(User::class);
   }
+
+  public function donors()
+  {
+    return $this->belongsToMany(User::class, 'post_donors', 'donor_id', 'post_id')->withPivot('status', 'id');
+  }
+
 }
