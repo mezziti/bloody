@@ -23,6 +23,7 @@ import { format } from "date-fns";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { useEffect, useState } from "react";
 import { Alert, AlertTitle } from "@/Components/ui/alert";
+import { BloodTypes } from "@/Components/data/BloodTypes";
 
 export default function UpdateProfileInformation({
   mustVerifyEmail,
@@ -32,32 +33,7 @@ export default function UpdateProfileInformation({
 }) {
 
 
-  const bloodTypes = [
-    {
-      name: "A+",
-    },
-    {
-      name: "A-",
-    },
-    {
-      name: "B+",
-    },
-    {
-      name: "B-",
-    },
-    {
-      name: "AB+",
-    },
-    {
-      name: "AB-",
-    },
-    {
-      name: "O+",
-    },
-    {
-      name: "O-",
-    },
-  ];
+  const bloodTypes = BloodTypes
   const user = usePage().props.auth.user;
 
   const [city, setCity] = useState(user.city);

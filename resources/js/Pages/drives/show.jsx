@@ -1,4 +1,4 @@
-import { Head, Link, router, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { Authenticated } from "@/Layouts/AuthenticatedLayout";
 import { Button } from "@/Components/ui/button";
 import { Badge } from "@/Components/ui/badge";
@@ -15,17 +15,36 @@ import {
 } from "@/Components/ui/alert-dialog";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/Components/ui/popover";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/Components/ui/calendar";
+import { format } from "date-fns";
 
 const show = ({ auth, drive }) => {
 
+  const [donation_date, setDonationDate] = useState()
+  
+  useEffect(() => {
+    donation_date ? setData("donation_date", format(donation_date, "yyyy-MM-dd")) : "";
+  }, [donation_date]);
+
   const { data, setData, put, processing } = useForm({
     message: "",
+    donation_date: "",
   });
 
   const handelReject = (id) => {
     if (data.message == "") setData("message", "Rejected by the organizer");
     put(route("reject", id));
   };
+
+  console.log(data)
 
   return (
     <Authenticated user={auth.user} pageName={"All participiats"}>
@@ -143,90 +162,130 @@ const show = ({ auth, drive }) => {
                               )}
                             </td>
                             <td className="px-4 py-3 flex items-center justify-end">
-                              {participant.pivot.status =='pending' && <div className="flex gap-2">
-                                <AlertDialog>
-                                  <AlertDialogTrigger>
-                                    <Button disabled={processing}>
-                                      Approve
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      Approve
-                                    </AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                      Are you sure you want to Approve this
-                                      participant?
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      This action cannot be undone.
-                                    </AlertDialogDescription>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>
-                                        Cancel
-                                      </AlertDialogCancel>
-                                      <AlertDialogAction
-                                        onClick={() =>
-                                          put(
-                                            route(
-                                              "approve",
-                                              participant.pivot.id
-                                            )
-                                          )
-                                        }
-                                      >
+                              {participant.pivot.status == "pending" && (
+                                <div className="flex gap-2">
+                                  <AlertDialog>
+                                    <AlertDialogTrigger>
+                                      <Button disabled={processing}>
                                         Approve
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                                
-                                <AlertDialog>
-                                  <AlertDialogTrigger>
-                                    <Button
-                                      variant="outline"
-                                      disabled={processing}
-                                    >
-                                      Reject
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogTitle>
-                                      Are you sure you want to reject this
-                                      participant?
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      This action cannot be undone. <br /><br />
-                                      <Label htmlFor="message">Reject Message:</Label>
-                                      <Textarea
-                                        id="message"
-                                        type="text"
-                                        name="message"
-                                        value={data.message}
-                                        className="mt-1 block w-full"
-                                        autoComplete="message"
-                                        onChange={(e) =>
-                                          setData("message", e.target.value)
-                                        }
-                                      />
-                                    </AlertDialogDescription>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>
-                                        Cancel
-                                      </AlertDialogCancel>
-                                      <AlertDialogAction
-                                        onClick={() =>
-                                          handelReject(
-                                            participant.pivot.id
-                                          )
-                                        }
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        Approve
+                                      </AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        Are you sure you want to Approve this
+                                        participant?
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone.
+                                        <br />
+                                        <br />
+                                        <Label htmlFor="donation_date">
+                                          Schedule a Date to Donate:
+                                        </Label>
+                                        <br />
+                                        <br />
+                                        <Popover>
+                                          <PopoverTrigger asChild>
+                                            <Button
+                                              variant={"outline"}
+                                              className={cn(
+                                                "justify-start text-left font-normal",
+                                                !donation_date &&
+                                                  "text-muted-foreground"
+                                              )}
+                                            >
+                                              <CalendarIcon className="mr-2 h-4 w-4" />
+                                              {donation_date ? (
+                                                format(donation_date, "PPP")
+                                              ) : (
+                                                <span>Pick a date</span>
+                                              )}
+                                            </Button>
+                                          </PopoverTrigger>
+                                          <PopoverContent
+                                            className="w-auto p-0"
+                                            align="start"
+                                          >
+                                            <Calendar
+                                              mode="single"
+                                              selected={donation_date}
+                                              onSelect={setDonationDate}
+                                              initialFocus
+                                            />
+                                          </PopoverContent>
+                                        </Popover>
+                                      </AlertDialogDescription>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                          Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() =>
+                                            put(
+                                              route(
+                                                "approve",
+                                                participant.pivot.id
+                                              )
+                                            )
+                                          }
+                                        >
+                                          Approve
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+
+                                  <AlertDialog>
+                                    <AlertDialogTrigger>
+                                      <Button
+                                        variant="outline"
+                                        disabled={processing}
                                       >
                                         Reject
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              </div>}
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogTitle>
+                                        Are you sure you want to reject this
+                                        participant?
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone. <br />
+                                        <br />
+                                        <Label htmlFor="message">
+                                          Reject Message:
+                                        </Label>
+                                        <Textarea
+                                          id="message"
+                                          type="text"
+                                          name="message"
+                                          value={data.message}
+                                          className="mt-1 block w-full"
+                                          autoComplete="message"
+                                          onChange={(e) =>
+                                            setData("message", e.target.value)
+                                          }
+                                        />
+                                      </AlertDialogDescription>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                          Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() =>
+                                            handelReject(participant.pivot.id)
+                                          }
+                                        >
+                                          Reject
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </div>
+                              )}
                             </td>
                           </tr>
                         ))}

@@ -30,33 +30,9 @@ import {
   SheetTrigger,
 } from "@/Components/ui/sheet";
 import Paginate from "@/Components/Paginate";
+import { BloodTypes } from "@/Components/data/BloodTypes";
 const posts = ({ auth, allPosts, cities, session }) => {
-  const bloodTypes = [
-    {
-      name: "A+",
-    },
-    {
-      name: "A-",
-    },
-    {
-      name: "B+",
-    },
-    {
-      name: "B-",
-    },
-    {
-      name: "AB+",
-    },
-    {
-      name: "AB-",
-    },
-    {
-      name: "O+",
-    },
-    {
-      name: "O-",
-    },
-  ];
+  const bloodTypes = BloodTypes
 
   let posts = allPosts.data;
 
@@ -89,7 +65,6 @@ const posts = ({ auth, allPosts, cities, session }) => {
     }
   }, [data.post_id]);
 
-  console.log(session)
   return (
     <Guest user={user}>
       <Head title="All posts" />

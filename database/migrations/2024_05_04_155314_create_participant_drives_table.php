@@ -16,14 +16,13 @@ return new class extends Migration
       $table->foreignId('user_id');
       $table->foreignId('drive_id');
       $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+      $table->timestamp('donation_date')->nullable();
       $table->string('message')->nullable();
       $table->timestamps();
     });
   }
 
-  /**
-   * Reverse the migrations.
-   */
+  
   public function down(): void
   {
     Schema::dropIfExists('participant_drives');

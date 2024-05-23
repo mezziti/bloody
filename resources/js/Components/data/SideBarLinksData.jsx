@@ -15,6 +15,11 @@ export const sideBarLinksData = [
     roles: ["bank"],
   },
   {
+    name: "Bags",
+    route: "bags.index",
+    roles: ["bank"],
+  },
+  {
     name: "My Participations",
     route: "participations",
     roles: ["donor"],

@@ -30,6 +30,7 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { ScrollArea } from "@/Components/ui/scroll-area";
+import { BloodTypes } from "@/Components/data/BloodTypes";
 
 export default function Register({ cities }) {
   const [city, setCity] = useState();
@@ -64,36 +65,10 @@ export default function Register({ cities }) {
 
   const submit = (e) => {
     e.preventDefault();
-
     post(route("register"));
   };
 
-  const bloodTypes = [
-    {
-      name: "A+",
-    },
-    {
-      name: "A-",
-    },
-    {
-      name: "B+",
-    },
-    {
-      name: "B-",
-    },
-    {
-      name: "AB+",
-    },
-    {
-      name: "AB-",
-    },
-    {
-      name: "O+",
-    },
-    {
-      name: "O-",
-    },
-  ];
+  const bloodTypes = BloodTypes;
 
   return (
     <Guest>

@@ -1,5 +1,5 @@
 import Guest from "@/Layouts/GuestLayout";
-import { Head, router, useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import { Link } from "@inertiajs/react";
 import {
@@ -30,7 +30,6 @@ import {
   SheetTrigger,
 } from "@/Components/ui/sheet";
 import Paginate from "@/Components/Paginate";
-import InputError from "@/Components/InputError";
 
 const Index = ({ auth, allDrives, cities, session }) => {
   const now = new Date();

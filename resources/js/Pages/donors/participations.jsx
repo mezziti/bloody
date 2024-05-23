@@ -1,4 +1,4 @@
-import { Head, Link, router } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { Authenticated } from "@/Layouts/AuthenticatedLayout";
 import { Button } from "@/Components/ui/button";
 import {
@@ -20,19 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
 import { useState } from "react";
-import Paginate from "@/Components/Paginate";
 
 const index = ({ auth, participant, cities }) => {
   const [city, setCity] = useState("");

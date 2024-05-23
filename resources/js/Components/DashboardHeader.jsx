@@ -14,8 +14,10 @@ import ApplicationLogo from "@/Components/ApplicationLogo";
 import SideBarLinks from "@/Components/SideBarLinks.jsx";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import HeaderLink from "./HeaderLink";
+import { MainHeaderLinkData } from "./data/mainHeaderLinksData";
 
 const DashboardHeader = ({ user }) => {
+  const mainHeaderLinkData = MainHeaderLinkData;
   return (
     <header className="flex bg-white h-14 py-5 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
@@ -38,14 +40,23 @@ const DashboardHeader = ({ user }) => {
           </ScrollArea>
         </SheetContent>
       </Sheet>
-      <div className="w-full flex-1">
-        <HeaderLink
-          className="font-medium"
-          href={route("drives")}
-          active={route().current("drives")}
-        >
-          Drives
-        </HeaderLink>
+      <div className="w-full items-center">
+        <div className="w-full justify-center hidden sm:flex gap-3">
+          {mainHeaderLinkData.map((link, index) => {
+            return (
+              <HeaderLink
+                key={index}
+                className="font-medium"
+                href={route(link.route)}
+                active={route().current(link.route)}
+              >
+                <div className="flex gap-[6px]">
+                {link.icon}
+                {link.name}</div>
+              </HeaderLink>
+            );
+          })}
+        </div>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

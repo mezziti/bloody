@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('blood_bags', function (Blueprint $table) {
             $table->id();
             $table->string('bag_code');
+            $table->foreignId('bank_id')->constrained('users');
             $table->foreignId('donation_record_id')->constrained();
-            $table->enum('status', ['available','unavailable','reserved'])->default('available');
+            $table->enum('status', ['available','unavailable','reserved', 'expired'])->default('available');
             $table->timestamp('expiration_date');
             $table->string('description')->nullable();
             $table->string('storage_location')->nullable();

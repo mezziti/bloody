@@ -1,23 +1,7 @@
 import { Head, useForm, Link } from "@inertiajs/react";
 import { Authenticated } from "@/Layouts/AuthenticatedLayout";
 import { Button } from "@/Components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogTrigger,
-} from "@/Components/ui/dialog";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/Components/ui/sheet";
 import { ScrollArea } from "@/Components/ui/scroll-area";
-import { Badge } from "@/Components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -26,26 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/Components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
 import { useEffect, useState } from "react";
 import { Label } from "@/Components/ui/label";
 import { Input } from "@/Components/ui/input";
@@ -96,9 +60,6 @@ const index = ({ auth, cities }) => {
 
     post(route("drives.store"));
   };
-
-  const user = auth.user
-  const now = new Date();
 
   
 

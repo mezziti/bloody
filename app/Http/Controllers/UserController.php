@@ -2,13 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\City;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Http\Controllers\Controller;
+use App\Models\BloodBag;
+use App\Models\BloodRequest;
+use App\Models\City;
+use App\Models\DonationPost;
+use App\Models\DonationRecord;
+use App\Models\DonationRequest;
+use App\Models\Drive;
+use App\Models\ParticipantDrive;
+use App\Models\PostDonor;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware('bank')->only('createDonor', 'registerDonor');
+  }
+  public function dashboard()
+  {
+    if (auth()->user()->role == 'bank') {
+      $bloodRequests = BloodRequest::where('bank_id', auth()->id())->get()->count();
+    } else {
+      $bloodRequests = BloodRequest::where('requester_id', auth()->id())->get()->count();
+    }
+    return Inertia::render('Dashboard', [
+      'bags' => BloodBag::where('bank_id', auth()->id())->get()->count(),
+      'bloodRequests' => $bloodRequests,
+      'posts' => DonationPost::where('requester_id', auth()->id())->get()->count(),
+      'records' => DonationRecord::where('bank_id', auth()->id())->get()->count(),
+      'donationRequests' => DonationRequest::where('donor_id', auth()->id())->get()->count(),
+      'myDonationRequests' => DonationRequest::where('requester_id', auth()->id())->get()->count(),
+      'drives' => Drive::where('bank_id', auth()->id())->get()->count(),
+      'donations' => PostDonor::where('donor_id', auth()->id())->get()->count(),
+      'participations' => ParticipantDrive::where('user_id', auth()->id())->get()->count(),
+    ]);
+  }
   public function donors()
   {
     return Inertia::render('donors/index', [
@@ -27,6 +65,36 @@ class UserController extends Controller
       'cities' => City::orderBy('name', 'asc')->get(),
       'session' => session('session'),
     ]);
+  }
+
+  public function createDonor()
+  {
+    return Inertia::render('donors/create', [
+      'cities' => City::orderBy('name', 'asc')->get(),
+    ]);
+  }
+
+  public function registerDonor(Request $request)
+  {
+    $validatedData = $request->validate([
+      'name' => 'required|string|max:255',
+      'address' => 'nullable|string|max:255',
+      'phone1' => 'required|string|max:10',
+      'phone2' => 'nullable|string|max:10',
+      'city_id' => 'required|string|max:255',
+      'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+      'password' => ['required', Password::defaults()],
+      'age' => 'required|integer',
+      'gender' => Rule::in(['male', 'female']),
+      'blood_type' => Rule::in(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
+      'last_donation_date' => 'nullable|date'
+    ]);
+
+    $validatedData['password'] = Hash::make($request->password);
+    $validatedData['role'] = 'donor';
+
+    User::create($validatedData);
+    return redirect()->route('records.create');
   }
 
   public function showDonor(User $donor)

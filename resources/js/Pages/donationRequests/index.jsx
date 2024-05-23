@@ -1,4 +1,4 @@
-import { Head, Link, router, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { Authenticated } from "@/Layouts/AuthenticatedLayout";
 import { Button } from "@/Components/ui/button";
 import {
@@ -32,9 +32,17 @@ import {
   AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
 import { useEffect, useState } from "react";
-import Paginate from "@/Components/Paginate";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/Components/ui/calendar";
+import { format } from "date-fns";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/Components/ui/popover";
 
 const index = ({ auth, donationRequests, cities }) => {
   const [city, setCity] = useState("");
@@ -48,7 +56,16 @@ const index = ({ auth, donationRequests, cities }) => {
   const { data, setData, put, processing } = useForm({
     status: "",
     message: "",
+    donation_date: "",
   });
+
+  const [donation_date, setDonationDate] = useState();
+
+  useEffect(() => {
+    donation_date
+      ? setData("donation_date", format(donation_date, "yyyy-MM-dd"))
+      : "";
+  }, [donation_date]);
 
   const handelApprove = (id) => {
     setId(id);
@@ -284,88 +301,125 @@ const index = ({ auth, donationRequests, cities }) => {
                               )}
                             </td>
                             <td className="px-4 py-3 flex items-center justify-end">
-                                {donationRequest.status == "pending" && (
-                                  <div className="flex gap-2">
-                                    <AlertDialog>
-                                      <AlertDialogTrigger>
-                                        <Button disabled={processing}>
-                                          Approve
-                                        </Button>
-                                      </AlertDialogTrigger>
-                                      <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                          Approve
-                                        </AlertDialogHeader>
-                                        <AlertDialogTitle>
-                                          Are you sure you want to Approve this
-                                          request?
-                                        </AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                          This action cannot be undone.
-                                        </AlertDialogDescription>
-                                        <AlertDialogFooter>
-                                          <AlertDialogCancel>
-                                            Cancel
-                                          </AlertDialogCancel>
-                                          <AlertDialogAction
-                                            onClick={() =>
-                                              handelApprove(donationRequest.id)
-                                            }
+                              {donationRequest.status == "pending" && (
+                                <div className="flex gap-2">
+                                  <AlertDialog>
+                                    <AlertDialogTrigger>
+                                      <Button disabled={processing}>
+                                        Approve
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        Approve
+                                      </AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        Are you sure you want to Approve this
+                                        request?
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone.
+                                        <br />
+                                        <br />
+                                        <Label htmlFor="donation_date">
+                                          Schedule a Date to Donate:
+                                        </Label>
+                                        <br />
+                                        <br />
+                                        <Popover>
+                                          <PopoverTrigger asChild>
+                                            <Button
+                                              variant={"outline"}
+                                              className={cn(
+                                                "justify-start text-left font-normal",
+                                                !donation_date &&
+                                                  "text-muted-foreground"
+                                              )}
+                                            >
+                                              <CalendarIcon className="mr-2 h-4 w-4" />
+                                              {donation_date ? (
+                                                format(donation_date, "PPP")
+                                              ) : (
+                                                <span>Pick a date</span>
+                                              )}
+                                            </Button>
+                                          </PopoverTrigger>
+                                          <PopoverContent
+                                            className="w-auto p-0"
+                                            align="start"
                                           >
-                                            Approve
-                                          </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                      </AlertDialogContent>
-                                    </AlertDialog>
-                                    <AlertDialog>
-                                      <AlertDialogTrigger>
-                                        <Button
-                                          variant="outline"
-                                          disabled={processing}
+                                            <Calendar
+                                              mode="single"
+                                              selected={donation_date}
+                                              onSelect={setDonationDate}
+                                              initialFocus
+                                            />
+                                          </PopoverContent>
+                                        </Popover>
+                                      </AlertDialogDescription>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                          Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() =>
+                                            handelApprove(donationRequest.id)
+                                          }
+                                        >
+                                          Approve
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger>
+                                      <Button
+                                        variant="outline"
+                                        disabled={processing}
+                                      >
+                                        Reject
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogTitle>
+                                        Are you sure you want to reject this
+                                        donationRequest?
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone. <br />
+                                        <br />
+                                        <Label htmlFor="message">
+                                          Reject Message:
+                                        </Label>
+                                        <Textarea
+                                          id="message"
+                                          type="text"
+                                          name="message"
+                                          value={data.message}
+                                          className="mt-1 block w-full"
+                                          autoComplete="message"
+                                          onChange={(e) =>
+                                            setData("message", e.target.value)
+                                          }
+                                        />
+                                      </AlertDialogDescription>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                          Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() =>
+                                            handelReject(donationRequest.id)
+                                          }
                                         >
                                           Reject
-                                        </Button>
-                                      </AlertDialogTrigger>
-                                      <AlertDialogContent>
-                                        <AlertDialogTitle>
-                                          Are you sure you want to reject this
-                                          donationRequest?
-                                        </AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                          This action cannot be undone. <br />
-                                          <br />
-                                          <Label htmlFor="message">
-                                            Reject Message:
-                                          </Label>
-                                          <Textarea
-                                            id="message"
-                                            type="text"
-                                            name="message"
-                                            value={data.message}
-                                            className="mt-1 block w-full"
-                                            autoComplete="message"
-                                            onChange={(e) =>
-                                              setData("message", e.target.value)
-                                            }
-                                          />
-                                        </AlertDialogDescription>
-                                        <AlertDialogFooter>
-                                          <AlertDialogCancel>
-                                            Cancel
-                                          </AlertDialogCancel>
-                                          <AlertDialogAction
-                                            onClick={() =>
-                                              handelReject(donationRequest.id)
-                                            }
-                                          >
-                                            Reject
-                                          </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                      </AlertDialogContent>
-                                    </AlertDialog>
-                                  </div>
-                                )}
-                              </td>
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </div>
+                              )}
+                            </td>
                           </tr>
                         ))}
                       </tbody>

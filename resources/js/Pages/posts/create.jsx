@@ -14,34 +14,10 @@ import { useEffect, useState } from "react";
 import { Label } from "@/Components/ui/label";
 import { Input } from "@/Components/ui/input";
 import InputError from "@/Components/InputError";
+import { BloodTypes } from "@/Components/data/BloodTypes";
 
 const index = ({ auth, cities }) => {
-  const bloodTypes = [
-    {
-      name: "A+",
-    },
-    {
-      name: "A-",
-    },
-    {
-      name: "B+",
-    },
-    {
-      name: "B-",
-    },
-    {
-      name: "AB+",
-    },
-    {
-      name: "AB-",
-    },
-    {
-      name: "O+",
-    },
-    {
-      name: "O-",
-    },
-  ];
+  const bloodTypes = BloodTypes
 
   const [city, setCity] = useState("");
   const selectedCity = city ? cities.filter((c) => c.name === city) : "";

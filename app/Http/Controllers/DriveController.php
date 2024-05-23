@@ -94,10 +94,13 @@ class DriveController extends Controller
     return redirect()->route('drives.index');
   }
 
-  public function approve($id)
+  public function approve(Request $request ,$id)
   {
     $participantDrive = ParticipantDrive::findOrFail($id);
-    $participantDrive->update(['status' => 'approved']);
+    $participantDrive->update([
+      'status' => 'approved',
+      'donation_date' => $request->donation_date,
+    ]);
     return redirect()->back();
   }
 

@@ -1,4 +1,4 @@
-import { Head, Link, router, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { Authenticated } from "@/Layouts/AuthenticatedLayout";
 import { Button } from "@/Components/ui/button";
 import {
@@ -20,21 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
 import { useEffect, useState } from "react";
-import Paginate from "@/Components/Paginate";
-import { Label } from "@/Components/ui/label";
-import { Textarea } from "@/Components/ui/textarea";
 
 const index = ({ auth, donationRequests, cities }) => {
   const [city, setCity] = useState("");
@@ -65,6 +51,8 @@ const index = ({ auth, donationRequests, cities }) => {
       put(route("donationRequests.update", id));
     }
   }, [data.status, id]);
+
+  console.log(donationRequests);
 
   return (
     <>
@@ -189,6 +177,9 @@ const index = ({ auth, donationRequests, cities }) => {
                             Location
                           </th>
                           <th scope="col" className="px-4 py-3">
+                            Donation Date
+                          </th>
+                          <th scope="col" className="px-4 py-3">
                             Urgency
                           </th>
                           <th scope="col" className="px-4 py-3">
@@ -207,13 +198,13 @@ const index = ({ auth, donationRequests, cities }) => {
                               className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                             >
                               <Link
-                                  href={route(
-                                    "donors.show",
-                                    donationRequest.donor.id
-                                  )}
-                                >
-                                  {donationRequest.donor.name}
-                                </Link>
+                                href={route(
+                                  "donors.show",
+                                  donationRequest.donor.id
+                                )}
+                              >
+                                {donationRequest.donor.name}
+                              </Link>
                             </th>
                             <td className="px-4 py-3">
                               {donationRequest.hospital_name}
@@ -229,6 +220,9 @@ const index = ({ auth, donationRequests, cities }) => {
                             </td>
                             <td className="px-4 py-3 text-nowrap">
                               {donationRequest.location}
+                            </td>
+                            <td className="px-4 py-3 text-nowrap">
+                              {donationRequest.donation_date ? donationRequest.donation_date.split(' ')[0]: ''}
                             </td>
                             <td className="px-4 py-3 text-nowrap">
                               {donationRequest.urgency_level == "normale" ? (

@@ -24,47 +24,38 @@ import {
   PopoverTrigger,
 } from "@/Components/ui/popover";
 import { CalendarIcon } from "lucide-react";
-import { BloodTypes } from "@/Components/data/BloodTypes";
 
-const edit = ({ auth, record, donors, drives }) => {
-  
-  record.donor_id = record.donor_id.toString();
-  record.drive_id ? record.drive_id = record.drive_id.toString() : '';
+const index = ({ auth, records }) => {
 
-  const [donation_date, setDonationDate] = useState(
-    record.donation_date.split(" ")[0]
-  );
-  const bloodTypes = BloodTypes
+  const [expiration_date, setExpirationDate] = useState();
 
   useEffect(() => {
-    donation_date
-      ? setData("donation_date", format(donation_date, "yyyy-MM-dd"))
+    expiration_date
+      ? setData("expiration_date", format(expiration_date, "yyyy-MM-dd"))
       : "";
-  }, [donation_date]);
+  }, [expiration_date]);
 
-  const { data, setData, put, processing, errors } = useForm({
-    donor_id: record.donor_id,
-    drive_id: record.drive_id,
-    donation_date: record.donation_date.split(" ")[0],
-    blood_type: record.blood_type,
-    description: record.description || '',
+  const { data, setData, post, processing, errors } = useForm({
+    bag_code: "",
+    donation_record_id: "",
+    expiration_date: "",
+    storage_location: "",
+    status: "",
+    description: "",
   });
 
-  donors = donors.map((donor) => ({
-    ...donor,
-    id: donor.id.toString(),
-  }));
-
-  drives = drives.map((drive) => ({
-    ...drive,
-    id: drive.id.toString(),
+  records = records.map((record) => ({
+    ...record,
+    id: record.id.toString(),
   }));
 
   const submit = (e) => {
     e.preventDefault();
 
-    put(route("records.update", record.id));
+    post(route("bags.store"));
   };
+
+  console.log(data);
 
   return (
     <>
@@ -75,65 +66,54 @@ const edit = ({ auth, record, donors, drives }) => {
             <div className="grid gap-4 p-5">
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="donor">donor</Label>
+                  <Label htmlFor="bag_code">Bag Code</Label>
+                  <Input
+                    id="bag_code"
+                    type="text"
+                    name="bag_code"
+                    value={data.bag_code}
+                    className="mt-1 block w-full"
+                    autoComplete="bag_code"
+                    onChange={(e) => setData("bag_code", e.target.value)}
+                  />
+                  <InputError message={errors.bag_code} className="mt-2" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="donation_record_id">Record Id</Label>
                   <Select
-                    value={data.donor_id}
-                    onValueChange={(value) => setData("donor_id", value)}
+                    onValueChange={(value) => setData("donation_record_id", value)}
                   >
                     <SelectTrigger className="ml-auto ">
-                      <SelectValue placeholder="Select donor" />
+                      <SelectValue placeholder="Select Record Id" />
                     </SelectTrigger>
                     <SelectContent className="">
                       <ScrollArea className="max-h-40 z-10">
                         <SelectGroup>
-                          {donors.map((donor) => (
-                            <SelectItem key={donor.id} value={donor.id}>
-                              {donor.name}
+                          {records.map((record) => (
+                            <SelectItem key={record.id} value={record.id}>
+                              {record.id}
                             </SelectItem>
                           ))}
                         </SelectGroup>
                       </ScrollArea>
                     </SelectContent>
                   </Select>
-                  <InputError message={errors.donor_id} className="mt-2" />
+                  <InputError message={errors.donation_record_id} className="mt-2" />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="drive">drive</Label>
-                  <Select
-                    value={data.drive_id}
-                    onValueChange={(value) => setData("drive_id", value)}
-                  >
-                    <SelectTrigger className="ml-auto ">
-                      <SelectValue placeholder="Select drive" />
-                    </SelectTrigger>
-                    <SelectContent className="">
-                      <ScrollArea className="max-h-40 z-10">
-                        <SelectGroup>
-                          {drives.map((drive) => (
-                            <SelectItem key={drive.id} value={drive.id}>
-                              {drive.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </ScrollArea>
-                    </SelectContent>
-                  </Select>
-                  <InputError message={errors.drive_id} className="mt-2" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="donation_date">Donation Date</Label>
+                  <Label htmlFor="expiration_date">Expiration Date</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         variant={"outline"}
                         className={cn(
                           "justify-start text-left font-normal",
-                          !donation_date && "text-muted-foreground"
+                          !expiration_date && "text-muted-foreground"
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {donation_date ? (
-                          format(donation_date, "PPP")
+                        {expiration_date ? (
+                          format(expiration_date, "PPP")
                         ) : (
                           <span>Pick a date</span>
                         )}
@@ -142,44 +122,63 @@ const edit = ({ auth, record, donors, drives }) => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={donation_date}
-                        onSelect={setDonationDate}
+                        selected={expiration_date}
+                        onSelect={setExpirationDate}
                         initialFocus
                       />
                     </PopoverContent>
                   </Popover>
-                  <InputError message={errors.donation_date} className="mt-2" />
+                  <InputError
+                    message={errors.expiration_date}
+                    className="mt-2"
+                  />
                 </div>
               </div>
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="blood_type">Blood Type</Label>
+                  <Label htmlFor="storage_location">Storage Location</Label>
+                  <Input
+                    id="storage_location"
+                    type="text"
+                    name="storage_location"
+                    value={data.storage_location}
+                    className="mt-1 block w-full"
+                    autoComplete="storage_location"
+                    onChange={(e) =>
+                      setData("storage_location", e.target.value)
+                    }
+                  />
+                  <InputError
+                    message={errors.storage_location}
+                    className="mt-2"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="status">Status</Label>
                   <Select
-                    id="blood_type"
-                    name="blood_type"
-                    value={data.blood_type}
-                    onValueChange={(value) => setData("blood_type", value)}
+                    id="status"
+                    name="status"
+                    value={data.status}
+                    onValueChange={(value) => setData("status", value)}
                     className="ml-auto "
                   >
                     <SelectTrigger className="">
-                      <SelectValue placeholder="Select Blood Type" />
+                      <SelectValue placeholder="Select Status" />
                     </SelectTrigger>
                     <SelectContent className="">
                       <ScrollArea className="h-40">
                         <SelectGroup>
-                          {bloodTypes.map((bloodType) => (
-                            <SelectItem
-                              key={bloodType.name}
-                              value={bloodType.name}
-                            >
-                              {bloodType.name}
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="available">Available</SelectItem>
+                          <SelectItem value="unavailable">
+                            Unavailable
+                          </SelectItem>
+                          <SelectItem value="reserved">Reserved</SelectItem>
+                          <SelectItem value="expired">Expired</SelectItem>
                         </SelectGroup>
                       </ScrollArea>
                     </SelectContent>
                   </Select>
-                  <InputError message={errors.blood_type} className="mt-2" />
+                  <InputError message={errors.status} className="mt-2" />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="description">description</Label>
@@ -198,12 +197,12 @@ const edit = ({ auth, record, donors, drives }) => {
               <div className="flex gap-2">
                 <Link
                   className="w-auto px-5 border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-                  href={route("records.index")}
+                  href={route("bags.index")}
                 >
                   Cancel
                 </Link>
                 <Button disabled={processing} className="w-20">
-                  Edit
+                  Create
                 </Button>
               </div>
             </div>
@@ -214,6 +213,4 @@ const edit = ({ auth, record, donors, drives }) => {
   );
 };
 
-export default edit;
-
-
+export default index;

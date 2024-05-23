@@ -32,26 +32,22 @@ import {
 } from "@/Components/ui/alert-dialog";
 import { useState } from "react";
 import Paginate from "@/Components/Paginate";
+import { Badge } from "@/Components/ui/badge";
 
-const index = ({ auth, records, cities }) => {
-  const [city, setCity] = useState("");
+const index = ({ auth, bags }) => {
   const [status, setStatus] = useState("");
 
-  let recordsData = records.data;
+  let bagsData = bags.data;
 
-  recordsData = city
-    ? records.data.filter((record) => record.city_id == city)
-    : records.data;
+  bagsData = status
+    ? bags.data.filter((bag) => bag.status == status)
+    : bags.data;
 
-  recordsData = status
-    ? recordsData.filter((record) => record.status == status)
-    : recordsData;
-
-  console.log(records);
+  // console.log(bags);
 
   return (
-    <Authenticated user={auth.user} pageName={"All records"}>
-      <Head title="All Records" />
+    <Authenticated user={auth.user} pageName={"All bags"}>
+      <Head title="All bags" />
       <div className="flex w-full gap-2">
         <div className="gap-2 flex">
           <Sheet>
@@ -64,31 +60,6 @@ const index = ({ auth, records, cities }) => {
               </SheetHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-4 mx-auto">
-                  <div className="flex flex-col gap-1">
-                    <h3 className="text-sm font-semibold">City</h3>
-                    <div className="grid gap-2">
-                      <Select
-                        value={city}
-                        onValueChange={(value) => setCity(value)}
-                        className="ml-auto "
-                      >
-                        <SelectTrigger className="">
-                          <SelectValue placeholder="Select City" />
-                        </SelectTrigger>
-                        <SelectContent className="">
-                          <ScrollArea className="max-h-40 z-10">
-                            <SelectGroup>
-                              {cities.map((city) => (
-                                <SelectItem key={city.id} value={city.id}>
-                                  {city.name}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </ScrollArea>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
                   <div className="flex flex-col gap-1">
                     <h3 className="text-sm font-semibold">Status</h3>
                     <div className="grid gap-2">
@@ -103,9 +74,10 @@ const index = ({ auth, records, cities }) => {
                         <SelectContent className="">
                           <ScrollArea className="max-h-40 z-10">
                             <SelectGroup>
-                              <SelectItem value="upcoming">Upcoming</SelectItem>
-                              <SelectItem value="active">Active</SelectItem>
-                              <SelectItem value="ended">Ended</SelectItem>
+                              <SelectItem value="available">Available</SelectItem>
+                              <SelectItem value="unavailable">Unavailable</SelectItem>
+                              <SelectItem value="reserved">Reserved</SelectItem>
+                              <SelectItem value="expired">Expired</SelectItem>
                             </SelectGroup>
                           </ScrollArea>
                         </SelectContent>
@@ -115,7 +87,6 @@ const index = ({ auth, records, cities }) => {
                   <Button
                     className="mx-auto"
                     onClick={() => {
-                      setCity("");
                       setStatus("");
                     }}
                   >
@@ -131,7 +102,6 @@ const index = ({ auth, records, cities }) => {
           <Button
             className="mx-auto"
             onClick={() => {
-              setCity("");
               setStatus("");
             }}
           >
@@ -140,13 +110,13 @@ const index = ({ auth, records, cities }) => {
         </div>
         <Link
           className="bg-primary w-auto px-5 text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-          href={route("records.create")}
+          href={route("bags.create")}
         >
-          Create record
+          Create bag
         </Link>
       </div>
       <div className="mt-4">
-        {recordsData.length > 0 ? (
+        {bagsData.length > 0 ? (
           <section className="bg-gray-50 dark:bg-gray-900">
             <div className="mx-auto">
               <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
@@ -155,22 +125,22 @@ const index = ({ auth, records, cities }) => {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                       <tr>
                         <th scope="col" className="px-4 py-3">
-                          Id
+                          Bag Code
                         </th>
                         <th scope="col" className="px-4 py-3">
-                          Donor Name
+                          Record Id
                         </th>
                         <th scope="col" className="px-4 py-3">
-                          Drive Name
+                          Expiration Date
                         </th>
                         <th scope="col" className="px-4 py-3">
-                          Donation Date
-                        </th>
-                        <th scope="col" className="px-4 py-3">
-                          Blood Type
+                          Storage Location
                         </th>
                         <th scope="col" className="px-4 py-3">
                           Description
+                        </th>
+                        <th scope="col" className="px-4 py-3">
+                          Status
                         </th>
                         <th scope="col" className="px-4 py-3 text-end">
                           Actions
@@ -178,51 +148,64 @@ const index = ({ auth, records, cities }) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {recordsData.map((record) => (
+                      {bagsData.map((bag) => (
                         <tr
-                          key={record.id}
+                          key={bag.id}
                           className="border-b dark:border-gray-700"
                         >
-                          <th className="px-4 py-3 text-nowrap">{record.id}</th>
                           <th
                             scope="row"
                             className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
-                            <Link href={route("donors.show", [record.donor.id])}>
-                              {record.donor.name}
-                            </Link>
+                            {bag.bag_code}
                           </th>
                           <th
                             scope="row"
                             className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
-                            {record.drive ? (
-                              <Link
-                                href={route("drives.show", [record.drive.id])}
-                              >
-                                {record.drive.name}
-                              </Link>
-                            ) : (
-                              "no drive"
-                            )}
+                            {bag.record.id}
                           </th>
                           <td className="px-4 py-3 text-nowrap">
-                            {record.donation_date.split(" ")[0]}
+                            {bag.expiration_date.split(" ")[0]}
                           </td>
                           <td className="px-4 py-3 text-nowrap">
-                            {record.blood_type}
+                            {bag.storage_location}
                           </td>
                           <td className="px-4 py-3">
-                            {record.description &&
-                            record.description.length > 30
-                              ? record.description.slice(0, 30) + "..."
-                              : record.description}
+                            {bag.description && bag.description.length > 30
+                              ? bag.description.slice(0, 30) + "..."
+                              : bag.description}
+                          </td>
+                          <td className="px-4 py-3 text-nowrap">
+                            {bag.status == "unavailable" ? (
+                              <Badge
+                                className={"bg-orange-500 hover:bg-orange-500"}
+                              >
+                                Unavailable
+                              </Badge>
+                            ) : bag.status == "available" ? (
+                              <Badge
+                                className={"bg-green-500 hover:bg-green-500"}
+                              >
+                                Available
+                              </Badge>
+                            ) : bag.status == "reserved" ? (
+                              <Badge
+                                className={"bg-amber-500 hover:bg-amber-500"}
+                              >
+                                Reserved
+                              </Badge>
+                            ) : (
+                              <Badge className={"bg-red-500 hover:bg-red-500"}>
+                                Expired
+                              </Badge>
+                            )}
                           </td>
                           <td className="px-4 py-3 flex items-center justify-end">
                             <div className="flex gap-2">
                               <Link
                                 className="w-auto px-5 py-[10px] border border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-                                href={route("records.edit", record.id)}
+                                href={route("bags.edit", bag.id)}
                               >
                                 Edit
                               </Link>
@@ -237,8 +220,8 @@ const index = ({ auth, records, cities }) => {
                                     </AlertDialogTitle>
                                     <AlertDialogDescription>
                                       This action cannot be undone. This will
-                                      permanently delete this record and remove
-                                      it from our servers.
+                                      permanently delete this bag and remove it
+                                      from our servers.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
@@ -248,7 +231,7 @@ const index = ({ auth, records, cities }) => {
                                     <AlertDialogAction
                                       onClick={() =>
                                         router.delete(
-                                          route("records.destroy", record.id)
+                                          route("bags.destroy", bag.id)
                                         )
                                       }
                                     >
@@ -264,7 +247,7 @@ const index = ({ auth, records, cities }) => {
                     </tbody>
                   </table>
                   <div className="p-2">
-                    <Paginate links={records.links} />
+                    <Paginate links={bags.links} />
                   </div>
                 </div>
               </div>
@@ -272,9 +255,7 @@ const index = ({ auth, records, cities }) => {
           </section>
         ) : (
           <div className="flex items-center justify-center h-64 col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-            <p className="text-gray-500 dark:text-gray-400">
-              No records found.
-            </p>
+            <p className="text-gray-500 dark:text-gray-400">No bags found.</p>
           </div>
         )}
       </div>

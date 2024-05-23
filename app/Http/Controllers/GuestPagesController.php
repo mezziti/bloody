@@ -20,7 +20,7 @@ class GuestPagesController extends Controller
     ]);
   }
 
-  public function requests()
+  public function posts()
   {
     return Inertia::render('posts/posts', [
       'allPosts' => DonationPost::where('status','!=', 'inactive')->with('city')->with('requester')->orderBy('urgency_level','asc')->orderBy('created_at', 'asc')->paginate(10),

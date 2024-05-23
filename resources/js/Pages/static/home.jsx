@@ -1,15 +1,16 @@
 import { Head, Link } from "@inertiajs/react";
-import MainHeader from "@/Components/MainHeader";
 import Guest from "@/Layouts/GuestLayout";
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/Components/ui/carousel";
+  CollapsibleTrigger,
+  CollapsibleContent,
+  Collapsible,
+} from "@/Components/ui/collapsible";
+import { Button } from "@/Components/ui/button";
+import { ChevronDownIcon } from "lucide-react";
+import { FAQ } from "@/Components/data/FAQ";
 
 const Home = ({ auth }) => {
+  const faq = FAQ;
   return (
     <Guest user={auth.user}>
       <Head title="Home" />
@@ -73,7 +74,7 @@ const Home = ({ auth }) => {
               </svg>
             </Link>
             <Link
-              href="/donation-process#test"
+              href="#eligible"
               className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
             >
               Check Eligibility
@@ -83,6 +84,39 @@ const Home = ({ auth }) => {
             <img src="/img/BloodyHero.svg" alt="mockup" />
           </div>
         </div>
+        <section className="w-full">
+          <div className="container px-4 md:px-6">
+            <div className="mx-auto max-w-3xl space-y-6 text-center">
+              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                Frequently Asked Questions
+              </h1>
+              <p className="text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                Get answers to the most common questions about the blood
+                donation process.
+              </p>
+            </div>
+            <div className="mx-auto max-w-3xl space-y-4" id="eligible">
+              {faq.map((item, index) => (
+                <Collapsible
+                  key={index}
+                  className="rounded-md border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-950"
+                >
+                  <CollapsibleTrigger className="flex w-full items-center justify-between space-x-4 px-4 py-3">
+                    <h3 className="text-base font-medium">{item.q}</h3>
+                    <CollapsibleTrigger asChild>
+                      <Button size="sm" variant="ghost">
+                        <ChevronDownIcon className="h-4 w-4 transition-transform group-[data-state=open]:rotate-180" />
+                      </Button>
+                    </CollapsibleTrigger>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="border-t border-gray-200 px-4 py-3 text-gray-500 dark:border-gray-800 dark:text-gray-400">
+                    <div dangerouslySetInnerHTML={{ __html: item.a }} />
+                  </CollapsibleContent>
+                </Collapsible>
+              ))}
+            </div>
+          </div>
+        </section>
       </section>
     </Guest>
   );

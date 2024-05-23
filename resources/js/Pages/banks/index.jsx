@@ -10,17 +10,6 @@ import {
 } from "@/Components/ui/dialog";
 import { Badge } from "@/Components/ui/badge";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
-import {
   Select,
   SelectContent,
   SelectGroup,
@@ -28,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import {
@@ -43,33 +32,9 @@ import {
 import { Label } from "@/Components/ui/label";
 import { Input } from "@/Components/ui/input";
 import InputError from "@/Components/InputError";
+import { BloodTypes } from "@/Components/data/BloodTypes";
 const Index = ({ auth, banks, cities, session }) => {
-  const bloodTypes = [
-    {
-      name: "A+",
-    },
-    {
-      name: "A-",
-    },
-    {
-      name: "B+",
-    },
-    {
-      name: "B-",
-    },
-    {
-      name: "AB+",
-    },
-    {
-      name: "AB-",
-    },
-    {
-      name: "O+",
-    },
-    {
-      name: "O-",
-    },
-  ];
+  const bloodTypes = BloodTypes
 
   const user = auth.user;
 

@@ -50,6 +50,7 @@ class RegisteredUserController extends Controller
       $validatedData['gender'] = $request->validate(['gender' => Rule::in(['male', 'female'])])['gender'];
       $validatedData['blood_type'] = $request->validate(['blood_type' => Rule::in(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])])['blood_type'];
       $validatedData['last_donation_date'] = $request->validate(['last_donation_date' => 'nullable|date'])['last_donation_date'];
+      $validatedData['status'] = 'active';
     } else {
       $validatedData['status'] = 'inactive';
     }

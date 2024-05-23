@@ -69,7 +69,10 @@ class DonationRequestController extends Controller
 
   public function update(Request $request, DonationRequest $donationRequest)
   {
-    $donationRequest->update(['status' => $request->status]);
+    $donationRequest->update([
+      'status' => $request->status,
+      'donation_date' => $request->donation_date,
+    ]);
     return redirect()->back();
   }
 

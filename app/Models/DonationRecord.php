@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class DonationRecord extends Model
 {
-    use HasFactory;
-    public $guarded = [];
+  use HasFactory;
+  public $guarded = [];
 
   public function city()
   {

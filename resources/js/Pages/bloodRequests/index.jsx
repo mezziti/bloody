@@ -1,4 +1,4 @@
-import { Head, Link, router, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { Authenticated } from "@/Layouts/AuthenticatedLayout";
 import { Button } from "@/Components/ui/button";
 import {
@@ -32,7 +32,6 @@ import {
   AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
 import { useEffect, useState } from "react";
-import Paginate from "@/Components/Paginate";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
 

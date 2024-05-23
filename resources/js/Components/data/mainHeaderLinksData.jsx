@@ -17,8 +17,8 @@ export const MainHeaderLinkData = [
     icon: <CalendarHeart className="h-5 w-5" />,
   },
   {
-    name: "Requests",
-    route: "requests",
+    name: "posts",
+    route: "posts",
     icon: <FileHeart className="h-5 w-5" />,
   },
 ];
