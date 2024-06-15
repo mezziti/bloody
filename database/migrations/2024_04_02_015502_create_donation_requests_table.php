@@ -13,8 +13,8 @@ return new class extends Migration
   {
     Schema::create('donation_requests', function (Blueprint $table) {
       $table->id();
-      $table->foreignId('requester_id')->constrained('users');
-      $table->foreignId('donor_id')->constrained('users');
+      $table->foreignId('requester_id')->constrained('users')->cascadeOnDelete();
+      $table->foreignId('donor_id')->constrained('users')->cascadeOnDelete();
       $table->string('hospital_name');
       $table->enum('blood_type', ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']);
       $table->integer('quantity')->default(1);

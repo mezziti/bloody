@@ -13,8 +13,8 @@ return new class extends Migration
   {
     Schema::create('participant_drives', function (Blueprint $table) {
       $table->id();
-      $table->foreignId('user_id');
-      $table->foreignId('drive_id');
+      $table->foreignId('user_id')->cascadeOnDelete();
+      $table->foreignId('drive_id')->cascadeOnDelete();
       $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
       $table->timestamp('donation_date')->nullable();
       $table->string('message')->nullable();

@@ -341,7 +341,7 @@ const posts = ({ auth, allPosts, cities, session }) => {
                             </Link>
                           </div>
                           <div>
-                            {auth.user.role == "donor" && (
+                            {
                               <Dialog>
                                 <DialogTrigger asChild>
                                   <Button>donate</Button>
@@ -403,7 +403,7 @@ const posts = ({ auth, allPosts, cities, session }) => {
                                   </DialogFooter>
                                 </DialogContent>
                               </Dialog>
-                            )}
+                            }
                           </div>
                         </div>
                       </article>

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('begin_date');
             $table->timestamp('end_date');
             $table->string('description')->nullable();
-            $table->foreignId('bank_id')->constrained('users');
+            $table->foreignId('bank_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }

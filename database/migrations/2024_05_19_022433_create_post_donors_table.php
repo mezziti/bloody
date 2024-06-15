@@ -13,8 +13,8 @@ return new class extends Migration
   {
     Schema::create('post_donors', function (Blueprint $table) {
       $table->id();
-      $table->foreignId('donor_id');
-      $table->foreignId('post_id');
+      $table->foreignId('donor_id')->cascadeOnDelete();
+      $table->foreignId('post_id')->cascadeOnDelete();
       $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
       $table->string('message')->nullable();
       $table->timestamps();
