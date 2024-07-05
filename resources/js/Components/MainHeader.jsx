@@ -5,6 +5,16 @@ import ApplicationLogo from "./ApplicationLogo";
 import HeaderLink from "./HeaderLink";
 import NavLink from "./NavLink";
 import { MainHeaderLinkData } from "./data/mainHeaderLinksData";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/Components/ui/dropdown-menu.jsx";
+import { CircleUser, LayoutGrid, LogOut } from "lucide-react";
+import { ScrollArea } from "./ui/scroll-area";
 
 const MainHeader = ({ user }) => {
   const mainHeaderLinkData = MainHeaderLinkData;
@@ -29,22 +39,52 @@ const MainHeader = ({ user }) => {
         })}
       </nav>
       {user ? (
-        <div className="flex gap-2 justify-center">
-          <Link
-            href={route("dashboard")}
-            className="ml-auto font-semibold bg-primary rounded-md text-white px-4 py-3 lg:ml-4 hover:bg-red-700 hidden md:flex"
-          >
-            Dashboard
-          </Link>
-          <Link
-            className="border border-input bg-background hover:bg-accent hover:text-accent-foreground ml-auto font-semibold rounded-md text-black px-4 py-3 lg:ml-4 hidden md:flex"
-            href={route("logout")}
-            method="post"
-            as="button"
-          >
-            Logout
-          </Link>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="cursor-pointer gap-1 flex items-center">
+              <h3>{user.name.split(" ")[0]}</h3>
+              <Button variant="secondary" size="icon" className="rounded-full">
+                <CircleUser className="h-5 w-5" />
+                <span className="sr-only">Toggle user menu</span>
+              </Button>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <div className="text-center text-gray-900">
+              <DropdownMenuLabel>
+                {user.email.length > 25
+                  ? `${user.email.slice(0, 25)}...`
+                  : user.email}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <div className="max-h-52 min-w-40">
+                <ScrollArea className="h-full">
+                  <DropdownMenuItem className="text-center flex gap-2 mx-auto">
+                    <Link
+                      className="text-center flex gap-2 w-full mx-auto"
+                      href={route("dashboard")}
+                      as="button"
+                    >
+                      <LayoutGrid />
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link
+                      className="text-center flex gap-2 w-full mx-auto"
+                      href={route("logout")}
+                      method="post"
+                      as="button"
+                    >
+                      <LogOut />
+                      Logout
+                    </Link>
+                  </DropdownMenuItem>
+                </ScrollArea>
+              </div>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ) : (
         <div className="flex gap-2 justify-center">
           <Link

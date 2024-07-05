@@ -344,7 +344,7 @@ const posts = ({ auth, allPosts, cities, session }) => {
                             {
                               <Dialog>
                                 <DialogTrigger asChild>
-                                  <Button>donate</Button>
+                                  <Button>Donate</Button>
                                 </DialogTrigger>
                                 <DialogContent className="sm:max-w-[425px]">
                                   {user ? (
@@ -382,7 +382,7 @@ const posts = ({ auth, allPosts, cities, session }) => {
                                               donate(post.id)
                                             }
                                           >
-                                            donate
+                                            Donate
                                           </Button>
                                         )
                                       ) : (
@@ -390,7 +390,7 @@ const posts = ({ auth, allPosts, cities, session }) => {
                                           disabled={processing}
                                           onClick={() => donate(post.id)}
                                         >
-                                          donate
+                                          Donate
                                         </Button>
                                       )
                                     ) : (

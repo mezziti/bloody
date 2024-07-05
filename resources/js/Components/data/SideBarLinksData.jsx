@@ -45,7 +45,7 @@ export const sideBarLinksData = [
     roles: ["bank", "donor", "recipient"],
   },
   {
-    name: "Donations",
+    name: "Posts Donations",
     route: "donations",
     roles: ["donor"],
   },

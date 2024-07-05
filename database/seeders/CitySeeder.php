@@ -14,6 +14,7 @@ class CitySeeder extends Seeder
     City::create(['name' => 'ouezzane']);
     City::create(['name' => 'casa']);
     City::create(['name' => 'rabat']);
+    City::create(['name' => 'tetouan']);
     City::create(['name' => 'agadir']);
     City::create(['name' => 'berchid']);
   }

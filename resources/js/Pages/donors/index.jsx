@@ -255,7 +255,7 @@ const Index = ({ auth, donors, cities, session }) => {
                                 <Button
                                   onClick={() => setData("donor_id", donor.id)}
                                 >
-                                  Request Blood
+                                  Request Donation
                                 </Button>
                               </DialogTrigger>
                               <DialogContent className="sm:max-w-[425px]">

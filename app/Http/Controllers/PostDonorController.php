@@ -24,7 +24,7 @@ class PostDonorController extends Controller
       return redirect()->route('posts')->with('session', ['id' => $postId, 'message' => "You can't donate", 'type' => 'text-primary']);
     }
     if (auth()->user()->blood_type != $post->blood_type) {
-      return redirect()->route('posts')->with('session', ['id' => $postId, 'message' => "You can't donate, because your blood type is not match", 'type' => 'text-primary']);
+      return redirect()->route('posts')->with('session', ['id' => $postId, 'message' => "You can't donate, because your blood type is not match with the type blood needed", 'type' => 'text-primary']);
     }
     if (PostDonor::where('donor_id', auth()->id())->where('post_id', $postId)->exists()) {
       return redirect()->route('posts')->with('session', ['id' => $postId, 'message' => 'You are already donated', 'type' => 'text-primary']);

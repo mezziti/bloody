@@ -22,7 +22,7 @@ class DonationPost extends Model
 
   public function donors()
   {
-    return $this->belongsToMany(User::class, 'post_donors', 'donor_id', 'post_id')->withPivot('status', 'id');
+    return $this->belongsToMany(User::class, 'post_donors', 'post_id', 'donor_id')->withPivot('status', 'id');
   }
 
 }
